@@ -99,6 +99,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\ICollectionFilter\ICollectionViewEx.cs" />
+    <Compile Include="Utils\ICollectionFilter\ListCollectionView.cs" />
+    <Compile Include="ViewModels\AddServerViewModel.cs" />
     <Compile Include="ViewModels\BIRCViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\AddServerPage.xaml.cs">

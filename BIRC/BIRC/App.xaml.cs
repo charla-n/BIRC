@@ -55,6 +55,7 @@ namespace BIRC
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
+                rootFrame.Navigated += RootFrame_Navigated;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {

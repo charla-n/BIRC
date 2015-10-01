@@ -70,10 +70,10 @@
                     </ListView>
                     <Button Style="{ThemeResource TextBlockButtonStyle}" 
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2"
-                    Command="{Binding AddServer}">
+                    Command="{Binding AddConnection}">
                         <StackPanel Orientation="Horizontal">
                             <SymbolIcon Symbol="Add"/>
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Margin="5,0,0,0">Add server</TextBlock>
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Margin="5,0,0,0">Add connection</TextBlock>
                         </StackPanel>
                     </Button>
                     <Line Grid.Row="3" X1="1000" Y1="0" X2="0" Y2="0"  Margin="5,10,5,0" StrokeThickness="3" Stroke="Black" Fill="Black"></Line>

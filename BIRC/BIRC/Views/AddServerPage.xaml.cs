@@ -26,5 +26,20 @@ namespace BIRC.Views
         {
             this.InitializeComponent();
         }
+
+        private void PortTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (PortTxtBox.Text.Length == 0)
+                return;
+            try
+            {
+                int.Parse(PortTxtBox.Text);
+            }
+            catch (Exception)
+            {
+                PortTxtBox.Text = PortTxtBox.Text.Remove(PortTxtBox.Text.Length - 1);
+                PortTxtBox.SelectionStart = PortTxtBox.Text.Length;
+            }
+        }
     }
 }
