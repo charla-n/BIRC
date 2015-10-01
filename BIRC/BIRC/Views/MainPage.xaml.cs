@@ -26,5 +26,10 @@ namespace BIRC
         {
             this.InitializeComponent();
         }
+
+        private void HamburgerButton_Click(object sender, RoutedEventArgs e)
+        {
+            LeftPane.IsPaneOpen = !LeftPane.IsPaneOpen;
+        }
     }
 }
