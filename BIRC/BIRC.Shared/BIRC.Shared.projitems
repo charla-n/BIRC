@@ -9,9 +9,15 @@
     <Import_RootNamespace>BIRC.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Models\ServerList.cs" />
+    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)serverlist.json" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ErrorBIRC.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PanicBIRC.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Files\AbstractFiles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Files\ServerList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Resources\en-US\ErrorResources.resw" />
   </ItemGroup>
 </Project>
