@@ -23,6 +23,7 @@ namespace BIRC
     /// </summary>
     sealed partial class App : Application
     {
+        public static string RESOURCE_NAME = "InfoResources";
         public static string APPNAME = "BIRC";
 
         /// <summary>

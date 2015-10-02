@@ -9,6 +9,7 @@
     <Import_RootNamespace>BIRC.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\Command.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ErrorBIRC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PanicBIRC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Files\AbstractFiles.cs" />
@@ -17,9 +18,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\Encryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\HtmlWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\LinqDistinctBy.cs" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Resources\en-US\ErrorResources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Resources\en-US\InfoResources.resw" />
   </ItemGroup>
 </Project>

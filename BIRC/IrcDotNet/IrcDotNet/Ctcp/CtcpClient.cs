@@ -363,7 +363,7 @@ namespace IrcDotNet.Ctcp
         protected void WriteMessage(IList<IIrcMessageTarget> targets, CtcpMessage message)
         {
             if (message.Tag == null)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageInvalidTag"), "message");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidTag"), "message");
 
             var tag = message.Tag.ToUpper();
             var taggedData = message.Data == null ? tag : tag + " :" + message.Data;

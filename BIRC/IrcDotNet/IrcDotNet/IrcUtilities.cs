@@ -46,7 +46,7 @@ namespace IrcDotNet
                     if (newModeParameters != null && modesWithParameters.Contains(mode))
                     {
                         if (!modeParametersEnumerator.MoveNext())
-                            throw new ArgumentException(new ResourceLoader().GetString("MessageNotEnoughModeParameters"),
+                            throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageNotEnoughModeParameters"),
                                 "newModeParameters");
                         handleModeParameter(addMode.Value, mode, modeParametersEnumerator.Current);
                     }

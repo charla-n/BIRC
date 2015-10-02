@@ -31,8 +31,8 @@ namespace IrcDotNet
         {
             if (targetMask == null)
                 throw new ArgumentNullException("targetMask");
-            if (new ResourceLoader().GetString("MessageTargetMaskTooShort").Length < 2)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageTargetMaskTooShort"), "targetMask");
+            if (ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageTargetMaskTooShort").Length < 2)
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageTargetMaskTooShort"), "targetMask");
 
             if (targetMask[0] == '$')
                 this.type = IrcTargetMaskType.ServerMask;
@@ -40,7 +40,7 @@ namespace IrcDotNet
                 this.type = IrcTargetMaskType.HostMask;
             else
                 throw new ArgumentException(string.Format(
-                    new ResourceLoader().GetString("MessageTargetMaskInvalidType"), targetMask), "targetMask");
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageTargetMaskInvalidType"), targetMask), "targetMask");
             this.mask = mask.Substring(1);
         }
 

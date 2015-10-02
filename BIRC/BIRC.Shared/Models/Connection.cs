@@ -1,12 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using BIRC.Shared.Commands;
+using IrcDotNet;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
+using Windows.UI.Core;
 
 namespace BIRC.Shared.Models
 {
-    public class Connection
+    public class Connection : INotifyPropertyChanged
     {
+        public Connection()
+        {
+            Command = new Command();
+            Command.Connection = this;
+        }
+
         [JsonIgnore]
         public const string DEFAULT_GROUP = "Default";
 
@@ -19,5 +29,33 @@ namespace BIRC.Shared.Models
         public string Group { get; set; }
         public char[] UserModes { get; set; }
         public bool AutoConnect { get; set; }
+
+        [JsonIgnore]
+        public Command Command { get; set; }
+        [JsonIgnore]
+        private string history;
+        [JsonIgnore]
+        public string History {
+            get
+            {
+                return history;
+            }
+            set
+            {
+                history = value;
+                MainPage.RunActionOnUiThread(() =>
+                { OnPropertyChanged("History"); });
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }

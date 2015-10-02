@@ -1,8 +1,11 @@
-﻿using System;
+﻿using BIRC.Shared.Models;
+using BIRC.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -25,6 +28,7 @@ namespace BIRC
     public sealed partial class MainPage : Page
     {
         private static CoreDispatcher dispatcher;
+        private static ResourceLoader loader;
 
         public MainPage()
         {
@@ -35,6 +39,7 @@ namespace BIRC
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+            loader = ResourceLoader.GetForCurrentView(App.RESOURCE_NAME);
         }
 
         public async static void RunActionOnUiThread(DispatchedHandler action)
@@ -45,9 +50,28 @@ namespace BIRC
                 action.Invoke();
         }
 
+        public static string GetString(string key)
+        {
+            return loader.GetString(key);
+        }
+
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             LeftPane.IsPaneOpen = !LeftPane.IsPaneOpen;
+        }
+
+        private void ShowFlyout(object sender)
+        {
+            FrameworkElement senderElement = sender as FrameworkElement;
+            FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+
+            ((BIRCViewModel)DataContext).ServerSelection = senderElement;
+            flyoutBase.ShowAt(senderElement);
+        }
+
+        private void serverStackPanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            ShowFlyout(sender);
         }
     }
 }

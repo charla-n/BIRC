@@ -118,7 +118,7 @@ namespace IrcDotNet
             else if (url.Scheme == "ircs")
                 useSsl = true;
             else
-                throw new ArgumentException(string.Format(new ResourceLoader().GetString("MessageInvalidUrlScheme"),
+                throw new ArgumentException(string.Format(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidUrlScheme"),
                                                           url.Scheme), "url");
 
             Connect(url.Host, url.Port == -1 ? DefaultPort : url.Port, useSsl, registrationInfo);

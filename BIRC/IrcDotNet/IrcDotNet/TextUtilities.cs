@@ -58,7 +58,7 @@ namespace IrcDotNet
                     else
                     {
                         throw new InvalidOperationException(
-                            new ResourceLoader().GetString("MessageInvalidQuotedChar"));
+                            ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidQuotedChar"));
                     }
                 }
                 else

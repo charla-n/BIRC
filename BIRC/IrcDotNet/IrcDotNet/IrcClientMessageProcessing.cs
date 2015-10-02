@@ -25,7 +25,7 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    new ResourceLoader().GetString("MessageSourceNotUser"), message.Source.Name));
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageSourceNotUser"), message.Source.Name));
 
             // Local or remote user has changed nick name.
             Debug.Assert(message.Parameters[0] != null);
@@ -42,7 +42,7 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    new ResourceLoader().GetString("MessageSourceNotUser"), message.Source.Name));
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageSourceNotUser"), message.Source.Name));
 
             // Remote user has quit server.
             Debug.Assert(message.Parameters[0] != null);
@@ -62,7 +62,7 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    new ResourceLoader().GetString("MessageSourceNotUser"), message.Source.Name));
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageSourceNotUser"), message.Source.Name));
 
             // Local or remote user has joined one or more channels.
             Debug.Assert(message.Parameters[0] != null);
@@ -83,7 +83,7 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    new ResourceLoader().GetString("MessageSourceNotUser"), message.Source.Name));
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageSourceNotUser"), message.Source.Name));
 
             // Local or remote user has left one or more channels.
             Debug.Assert(message.Parameters[0] != null);
@@ -123,7 +123,7 @@ namespace IrcDotNet
             }
             else
             {
-                throw new ProtocolViolationException(string.Format(new ResourceLoader().GetString("MessageCannotSetUserMode"),
+                throw new ProtocolViolationException(string.Format(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageCannotSetUserMode"),
                     message.Parameters[0]));
             }
         }

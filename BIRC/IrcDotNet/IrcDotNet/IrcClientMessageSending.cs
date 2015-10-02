@@ -165,7 +165,7 @@ namespace IrcDotNet
             {
                 var modeParametersArray = modeParameters.ToArray();
                 if (modeParametersArray.Length > 3)
-                    throw new ArgumentException(new ResourceLoader().GetString("MessageTooManyModeParameters"));
+                    throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageTooManyModeParameters"));
                 modeParametersList = string.Join(",", modeParametersArray);
             }
             WriteMessage(null, "mode", channel, modes, modeParametersList);
@@ -246,7 +246,7 @@ namespace IrcDotNet
             foreach (var target in targetsArray)
             {
                 if (target.Contains(","))
-                    throw new ArgumentException(new ResourceLoader().GetString("MessageInvalidTargetName"), "arguments");
+                    throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidTargetName"), "arguments");
             }
             WriteMessage(null, "privmsg", string.Join(",", targetsArray), text);
         }
@@ -262,7 +262,7 @@ namespace IrcDotNet
             foreach (var target in targetsArray)
             {
                 if (target.Contains(","))
-                    throw new ArgumentException(new ResourceLoader().GetString("MessageInvalidTargetName"), "arguments");
+                    throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidTargetName"), "arguments");
             }
             WriteMessage(null, "notice", string.Join(",", targetsArray), text);
         }

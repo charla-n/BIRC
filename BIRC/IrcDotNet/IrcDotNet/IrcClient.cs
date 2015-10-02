@@ -875,7 +875,7 @@ namespace IrcDotNet
             if (paramName == null)
                 throw new ArgumentNullException("paramName");
             if (paramName.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "paramName");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "paramName");
 
             // Check name of parameter.
             switch (paramName.ToLowerInvariant())
@@ -886,7 +886,7 @@ namespace IrcDotNet
                     var modes = prefixValueMatch.Groups["modes"].GetValue();
 
                     if (prefixes.Length != modes.Length)
-                        throw new ProtocolViolationException(new ResourceLoader().GetString("MessageISupportPrefixInvalid"));
+                        throw new ProtocolViolationException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageISupportPrefixInvalid"));
 
                     lock (((ICollection)this.channelUserModesReadOnly).SyncRoot)
                     {
@@ -914,7 +914,7 @@ namespace IrcDotNet
             if (input == null)
                 throw new ArgumentNullException("input");
             if (input.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "input");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "input");
 
             char mode;
             if (this.channelUserModesPrefixes.TryGetValue(input[0], out mode))
@@ -1032,7 +1032,7 @@ namespace IrcDotNet
                     return IrcChannelType.Secret;
                 default:
                     throw new ArgumentException(string.Format(
-                        new ResourceLoader().GetString("MessageInvalidChannelType"), type), "type");
+                        ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidChannelType"), type), "type");
             }
         }
 
@@ -1049,7 +1049,7 @@ namespace IrcDotNet
             if (targetName == null)
                 throw new ArgumentNullException("targetName");
             if (targetName.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "targetName");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "targetName");
 
             // Check whether target name represents channel, user, or target mask.
             var targetNameMatch = Regex.Match(targetName, regexMessageTarget);
@@ -1090,7 +1090,7 @@ namespace IrcDotNet
             else
             {
                 throw new ArgumentException(string.Format(
-                    new ResourceLoader().GetString("MessageInvalidSource"), targetName), "targetName");
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidSource"), targetName), "targetName");
             }
         }
 
@@ -1108,7 +1108,7 @@ namespace IrcDotNet
             if (prefix == null)
                 return null;
             if (prefix.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "prefix");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "prefix");
 
             // Check whether prefix represents server or user.
             var prefixMatch = Regex.Match(prefix, regexMessagePrefix);
@@ -1134,7 +1134,7 @@ namespace IrcDotNet
             else
             {
                 throw new ArgumentException(string.Format(
-                    new ResourceLoader().GetString("MessageInvalidSource"), prefix), "prefix");
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidSource"), prefix), "prefix");
             }
         }
 
@@ -1157,7 +1157,7 @@ namespace IrcDotNet
             if (hostName == null)
                 throw new ArgumentNullException("hostName");
             if (hostName.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "hostName");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "hostName");
 
             // Search for server with given name in list of known servers. If it does not exist, add it.
             var server = this.servers.SingleOrDefault(s => s.HostName == hostName);
@@ -1194,7 +1194,7 @@ namespace IrcDotNet
             if (channelName == null)
                 throw new ArgumentNullException("channelName");
             if (channelName.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "channelName");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "channelName");
 
             // Search for channel with given name in list of known channel. If it does not exist, add it.
             lock (((ICollection)this.channelsReadOnly).SyncRoot)
@@ -1238,7 +1238,7 @@ namespace IrcDotNet
             if (nickName == null)
                 throw new ArgumentNullException("nickName");
             if (nickName.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "nickName");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "nickName");
 
             // Search for user with given nick name in list of known users. If it does not exist, add it.
             IrcUser user;
@@ -1281,7 +1281,7 @@ namespace IrcDotNet
             if (userName == null)
                 throw new ArgumentNullException("userName");
             if (userName.Length == 0)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageValueCannotBeEmptyString"), "userName");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageValueCannotBeEmptyString"), "userName");
 
             // Search for user with given nick name in list of known users. If it does not exist, add it.
             lock (((ICollection)this.usersReadOnly).SyncRoot)
@@ -1372,7 +1372,7 @@ namespace IrcDotNet
                 else
                 {
                     throw new ProtocolViolationException(string.Format(
-                        new ResourceLoader().GetString("MessageInvalidCommandDefinition"), attribute.CommandName));
+                        ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidCommandDefinition"), attribute.CommandName));
                 }
             };
         }
@@ -1418,9 +1418,9 @@ namespace IrcDotNet
             CheckDisposed();
 
             if (message.Command == null)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageInvalidCommand"), "message");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidCommand"), "message");
             if (message.Parameters.Count > maxParamsCount)
-                throw new ArgumentException(new ResourceLoader().GetString("MessageTooManyParams"), "parameters");
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageTooManyParams"), "parameters");
 
             var lineBuilder = new StringBuilder();
 
@@ -1494,7 +1494,7 @@ namespace IrcDotNet
             if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
                 throw new ArgumentException(string.Format(
-                    new ResourceLoader().GetString("MessageInvalidPrefix"), value), "value");
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidPrefix"), value), "value");
             }
 
             return value;
@@ -1507,7 +1507,7 @@ namespace IrcDotNet
             if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
                 throw new ArgumentException(string.Format(
-                    new ResourceLoader().GetString("MessageInvalidCommand"), value), "value");
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidCommand"), value), "value");
             }
 
             return value;
@@ -1520,7 +1520,7 @@ namespace IrcDotNet
             if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c) || c == ' ') || value[0] == ':')
             {
                 throw new ArgumentException(string.Format(
-                    new ResourceLoader().GetString("MessageInvalidMiddleParameter"), value), "value");
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidMiddleParameter"), value), "value");
             }
 
             return value;
@@ -1533,7 +1533,7 @@ namespace IrcDotNet
             if (value.Any(c => IsInvalidMessageChar(c)))
             {
                 throw new ArgumentException(string.Format(
-                    new ResourceLoader().GetString("MessageInvalidMiddleParameter"), value), "value");
+                    ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidMiddleParameter"), value), "value");
             }
 
             return value;
@@ -1563,19 +1563,19 @@ namespace IrcDotNet
             {
                 if (registrationInfo.NickName == null ||
                     ((IrcUserRegistrationInfo)registrationInfo).UserName == null)
-                    throw new ArgumentException(new ResourceLoader().GetString("MessageInvalidUserRegistrationInfo"),
+                    throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidUserRegistrationInfo"),
                         registrationInfoParamName);
             }
             else if (registrationInfo is IrcServiceRegistrationInfo)
             {
                 if (registrationInfo.NickName == null ||
                     ((IrcServiceRegistrationInfo)registrationInfo).Description == null)
-                    throw new ArgumentException(new ResourceLoader().GetString("MessageInvalidServiceRegistrationInfo"),
+                    throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidServiceRegistrationInfo"),
                         registrationInfoParamName);
             }
             else
             {
-                throw new ArgumentException(new ResourceLoader().GetString("MessageInvalidRegistrationInfoObject"),
+                throw new ArgumentException(ResourceLoader.GetForCurrentView("IrcDotNet/Resources").GetString("MessageInvalidRegistrationInfoObject"),
                     registrationInfoParamName);
             }
         }
