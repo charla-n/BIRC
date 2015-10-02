@@ -14,12 +14,14 @@ namespace BIRC.ViewModels
 {
     public class BIRCViewModel : ViewModelBase
     {
+        private string connectTxt;
         private object serverSelection;
         private RelayCommand AddConnectionCmd;
         private RelayCommand ConnectionCmd;
 
         public BIRCViewModel()
         {
+            connectTxt = "Connect";
             RetrieveList();
             AddConnectionCmd = new RelayCommand(AddConnectionAction, () => true);
             ConnectionCmd = new RelayCommand(ConnectionAction, () => true);
@@ -42,7 +44,10 @@ namespace BIRC.ViewModels
 
         private void ConnectionAction()
         {
-            GetSelectedConnection().Command.Connect();
+            if (GetSelectedConnection().Command.IsConnected())
+                GetSelectedConnection().Command.Disconnect();
+            else
+                GetSelectedConnection().Command.Connect();
         }
 
         public string WebViewContent
@@ -52,6 +57,18 @@ namespace BIRC.ViewModels
                 if (GetSelectedConnection() == null)
                     return string.Empty;
                 return GetSelectedConnection().History;
+            }
+        }
+
+        public string ConnectTxt
+        {
+            get
+            {
+                return connectTxt;
+            }
+            set
+            {
+                connectTxt = value;
             }
         }
 
@@ -103,6 +120,14 @@ namespace BIRC.ViewModels
             if (e.PropertyName == nameof(Connection.History))
             {
                 OnPropertyChanged("WebViewContent");
+            }
+            else if (e.PropertyName == nameof(Connection.Connected))
+            {
+                if (GetSelectedConnection().Connected == false)
+                    connectTxt = "Connect";
+                else
+                    connectTxt = "Disconnect";
+                OnPropertyChanged("ConnectTxt");
             }
         }
 

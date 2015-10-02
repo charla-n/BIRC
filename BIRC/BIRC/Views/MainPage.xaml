@@ -13,7 +13,7 @@
                               Source="{Binding ByServers}" ItemsPath="Items" IsSourceGrouped="True">
         </CollectionViewSource>
         <MenuFlyout x:Key="ServerFlyout">
-            <MenuFlyoutItem Text="Connect" Command="{Binding Connect}" DataContext="{StaticResource BIRCViewModelDataContext}"></MenuFlyoutItem>
+            <MenuFlyoutItem Text="{Binding ConnectTxt, Mode=TwoWay}" Command="{Binding Connect}" DataContext="{StaticResource BIRCViewModelDataContext}"></MenuFlyoutItem>
         </MenuFlyout>
     </Page.Resources>
 

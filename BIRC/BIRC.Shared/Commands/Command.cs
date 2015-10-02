@@ -1,6 +1,7 @@
 ﻿using BIRC.Shared.Models;
 using BIRC.Shared.Utils;
 using IrcDotNet;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,6 +27,11 @@ namespace BIRC.Shared.Commands
             }
         }
 
+        public bool IsConnected()
+        {
+            return client.IsConnected;
+        }
+
         public void Unregister()
         {
             client.ChannelListReceived -= Client_ChannelListReceived;
@@ -49,6 +55,11 @@ namespace BIRC.Shared.Commands
             client.WhoIsReplyReceived -= Client_WhoIsReplyReceived;
             client.WhoReplyReceived -= Client_WhoReplyReceived;
             client.WhoWasReplyReceived -= Client_WhoWasReplyReceived;
+        }
+
+        public void Disconnect()
+        {
+            client.Disconnect();
         }
 
         public async void Connect()
@@ -131,7 +142,12 @@ namespace BIRC.Shared.Commands
 
         private void Client_RawMessageReceived(object sender, IrcRawMessageEventArgs e)
         {
-            connection.History += HtmlWriter.Write(e.RawContent);
+            string res = HtmlWriter.Write(ReceivedCommandParser.Parse(e.Message.Command, (string[])e.Message.Parameters, connection));
+
+            if (res == null)
+                connection.History += e.RawContent;
+            else
+                connection.History += res;
         }
 
         private void Client_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
@@ -148,6 +164,7 @@ namespace BIRC.Shared.Commands
 
         private void Client_ErrorMessageReceived(object sender, IrcErrorMessageEventArgs e)
         {
+            connection.History += HtmlWriter.WriteError(e.Message);
         }
 
         private void Client_Error(object sender, IrcErrorEventArgs e)
@@ -156,6 +173,7 @@ namespace BIRC.Shared.Commands
 
         private void Client_Disconnected(object sender, EventArgs e)
         {
+            connection.Connected = false;
             connection.History += HtmlWriter.Write(string.Format(MainPage.GetString("Disconnected"),
                 connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port));
             Unregister();
@@ -163,11 +181,13 @@ namespace BIRC.Shared.Commands
 
         private void Client_ConnectFailed(object sender, IrcErrorEventArgs e)
         {
+            connection.History += HtmlWriter.WriteError(e.Error.Message);
             Unregister();
         }
 
         private void Client_Connected(object sender, EventArgs e)
         {
+            connection.Connected = true;
             connection.History += HtmlWriter.Write(string.Format(MainPage.GetString("Connected"),
                 connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port));
         }

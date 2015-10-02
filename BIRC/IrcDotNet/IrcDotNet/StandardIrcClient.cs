@@ -337,6 +337,8 @@ namespace IrcDotNet
                                        this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition);
             receiveEventArgs.Completed += ReceiveCompleted;
 
+            if (!this.socket.Connected)
+                return;
             if (!this.socket.ReceiveAsync(receiveEventArgs))
                 ((EventHandler<SocketAsyncEventArgs>)ReceiveCompleted).BeginInvoke(
                     this.socket, receiveEventArgs, null, null);
@@ -463,15 +465,28 @@ namespace IrcDotNet
 
         private void DisconnectAsync()
         {
-            // Connect socket to remote endpoint asynchronously.
-            var disconnectEventArgs = new SocketAsyncEventArgs();
-            disconnectEventArgs.Completed += DisconnectCompleted;
-
 #if WINDOWS_UWP
-            this.socket.Shutdown(SocketShutdown.Both);
-            disconnectEventArgs.SocketError = SocketError.Success;
-            ((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
-                this.socket, disconnectEventArgs, null, null);
+            try
+            {
+                this.socket.Shutdown(SocketShutdown.Both);
+                HandleClientDisconnected();
+            }
+            catch (SocketException exSocket)
+            {
+                HandleSocketError(exSocket);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore.
+            }
+#if !DEBUG
+            catch (Exception ex)
+            {
+                OnError(new IrcErrorEventArgs(ex));
+            }
+#endif
+            //((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
+            //    this.socket, disconnectEventArgs, null, null);
 #else
             disconnectEventArgs.DisconnectReuseSocket = true;
             if (!this.socket.DisconnectAsync(disconnectEventArgs))

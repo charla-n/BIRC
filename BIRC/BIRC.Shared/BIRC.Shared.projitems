@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Commands\Command.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\ReceivedCommandParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ErrorBIRC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PanicBIRC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Files\AbstractFiles.cs" />

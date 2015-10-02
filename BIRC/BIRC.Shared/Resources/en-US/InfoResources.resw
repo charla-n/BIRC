@@ -123,8 +123,17 @@
   <data name="Disconnected" xml:space="preserve">
     <value>Disconnected from {0}:{1}</value>
   </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Usermode {0}</value>
+  </data>
+  <data name="PingRec" xml:space="preserve">
+    <value>Received ping, sent pong ({0})</value>
+  </data>
   <data name="Registered" xml:space="preserve">
     <value>Registered with {0}</value>
+  </data>
+  <data name="RplMyInfo" xml:space="preserve">
+    <value>Server {0} running on {1}, accepts user modes {2} and chan modes {3}</value>
   </data>
   <data name="TryToConnect" xml:space="preserve">
     <value>Try to connect on {0}:{1}</value>

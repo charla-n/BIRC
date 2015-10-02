@@ -47,6 +47,21 @@ namespace BIRC.Shared.Models
                 { OnPropertyChanged("History"); });
             }
         }
+        [JsonIgnore]
+        private bool connected;
+        [JsonIgnore]
+        public bool Connected {
+            get
+            {
+                return connected;
+            }
+            set
+            {
+                connected = value;
+                MainPage.RunActionOnUiThread(() =>
+                { OnPropertyChanged("Connected"); });
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
