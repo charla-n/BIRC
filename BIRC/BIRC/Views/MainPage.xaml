@@ -41,7 +41,7 @@
             <SplitView.Pane>
                 <Grid Background="{ThemeResource AppBarBackgroundThemeBrush}">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="64"/>
+                        <RowDefinition Height="34"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="42"/>
                         <RowDefinition Height="20"/>
@@ -50,12 +50,12 @@
                     </Grid.RowDefinitions>
                     <ListView x:Name="serverListView" Grid.Row="1"
                           ItemsSource="{Binding Source={StaticResource CollectionViewSourceServersKey}}"
-                          IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding AccountSelection, Mode=TwoWay}">
+                          IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}">
                         <ListView.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>
                                     <DataTemplate>
-                                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="{Binding Name}"/>
+                                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="{Binding Group}"/>
                                     </DataTemplate>
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
@@ -64,6 +64,7 @@
                             <DataTemplate>
                                 <RelativePanel
                                         x:Name="serverStackPanel">
+                                    <TextBlock Text="{Binding Server.Name}"></TextBlock>
                                 </RelativePanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

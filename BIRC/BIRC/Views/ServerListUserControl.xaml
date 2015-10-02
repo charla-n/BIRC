@@ -20,12 +20,12 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Name, Mode=TwoWay}"></TextBlock>
-                        <TextBlock Grid.Column="1" Text="{Binding Comment, Mode=TwoWay}" Margin="10,0,0,0"></TextBlock>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{Binding Name, Mode=TwoWay}"></TextBlock>
+                        <TextBlock Grid.Row="1" Text="{Binding Comment, Mode=TwoWay}" Margin="10,0,0,0"></TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

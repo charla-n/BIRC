@@ -69,7 +69,6 @@ namespace BIRC.ViewModels
 
         private async void RetrieveList()
         {
-            await ConnectionFile.Instance().ReadImpl();
             await ServerList.Instance().ReadImpl().ContinueWith(p =>
             {
                 List<Server> res = p.Result;
