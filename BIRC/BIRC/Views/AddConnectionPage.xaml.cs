@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BIRC.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,19 +28,23 @@ namespace BIRC.Views
             this.InitializeComponent();
         }
 
-        private void PortTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void PasswordRequiredToggleBtn_Toggled(object sender, RoutedEventArgs e)
         {
-            if (PortTxtBox.Text.Length == 0)
-                return;
-            try
+            if (!PasswordRequiredToggleBtn.IsOn)
             {
-                int.Parse(PortTxtBox.Text);
+                PasswordTxtBox.Visibility = Visibility.Collapsed;
+                PasswordTxt.Visibility = Visibility.Collapsed;
             }
-            catch (Exception)
+            else
             {
-                PortTxtBox.Text = PortTxtBox.Text.Remove(PortTxtBox.Text.Length - 1);
-                PortTxtBox.SelectionStart = PortTxtBox.Text.Length;
+                PasswordTxtBox.Visibility = Visibility.Visible;
+                PasswordTxt.Visibility = Visibility.Visible;
             }
+        }
+
+        private void AddConnectionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ((AddServerViewModel)DataContext).SetPassword(PasswordTxtBox.Password);
         }
     }
 }

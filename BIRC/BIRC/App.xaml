@@ -11,6 +11,7 @@
         <dc:AddServerViewModel x:Key="AddServerViewModelDataContext"/>
         <Thickness x:Key="DefaultThickness">0,10,0,10</Thickness>
         <Thickness x:Key="TitleThickness">0,0,0,20</Thickness>
+        <Thickness x:Key="FormThickness">0,10,0,0</Thickness>
     </Application.Resources>
 
 </Application>

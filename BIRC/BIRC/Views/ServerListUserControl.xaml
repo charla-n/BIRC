@@ -1,38 +1,39 @@
-﻿<Page
-    x:Class="BIRC.Views.AddServerPage"
+﻿<UserControl
+    x:Class="BIRC.Views.ServerListUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BIRC.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" DataContext="{StaticResource AddServerViewModelDataContext}">
-    
-    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5">
-        <TextBlock x:Name="TitleTxt" Style="{ThemeResource TitleTextBlockStyle}" Margin="{StaticResource TitleThickness}">Add a connection</TextBlock>
+    mc:Ignorable="d">
+
+    <RelativePanel>
         <TextBox x:Name="SearchServerTxtBox" PlaceholderText="Search"
                  RelativePanel.AlignLeftWithPanel="True"
                  RelativePanel.AlignRightWithPanel="True"
-                 RelativePanel.Below="TitleTxt" Text="{Binding TxtSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                 Text="{Binding TxtSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         <ListView x:Name="ListViewServer" ItemsSource="{Binding List}" MaxHeight="300"
                   RelativePanel.Below="SearchServerTxtBox"
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignLeftWithPanel="True"
-                  SelectedItem="{Binding ListSelectedItem, Mode=TwoWay}">
+                  SelectedItem="{Binding ListSelectedItem, Mode=TwoWay}" SelectionChanged="ListViewServer_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Name}"></TextBlock>
-                        <TextBlock Grid.Column="1" Text="{Binding Comment}"></TextBlock>
+                        <TextBlock Grid.Column="0" Text="{Binding Name, Mode=TwoWay}"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="{Binding Comment, Mode=TwoWay}" Margin="10,0,0,0"></TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Line x:Name="LineSrv" RelativePanel.Below="ListViewServer"
+                  X1="2000" Y1="0" X2="0" Y2="0"  Margin="5,20,5,0" StrokeThickness="1" Stroke="Gray" Fill="Black"></Line>
         <TextBlock Margin="{StaticResource DefaultThickness}" Style="{ThemeResource SubtitleTextBlockStyle}"
-                   RelativePanel.Below="ListViewServer" x:Name="AddOrEditSrvTxt">Add or Edit server</TextBlock>
+                   RelativePanel.Below="LineSrv" x:Name="AddOrEditSrvTxt">Add or Edit server</TextBlock>
         <Grid RelativePanel.Below="AddOrEditSrvTxt"
               RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignLeftWithPanel="True"
               Margin="{StaticResource DefaultThickness}"
@@ -50,16 +51,20 @@
             <TextBlock x:Name="HostnameTxt"
                    Style="{ThemeResource BaseTextBlockStyle}" Grid.Column="0" Grid.Row="0">Hostname</TextBlock>
             <TextBox x:Name="HostnameTxtBox"
-                 Grid.Column="0" Grid.Row="1" Text="{Binding TxtHostname, Mode=TwoWay}"></TextBox>
+                 Grid.Column="0" Grid.Row="1" Text="{Binding TxtHostname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="5,0,0,0" Grid.Column="1" Grid.Row="0">Port</TextBlock>
             <TextBox Margin="5,0,0,0" x:Name="PortTxtBox"
                  Grid.Column="1" Grid.Row="1" TextChanged="PortTxtBox_TextChanged" Text="{Binding TxtPort, Mode=TwoWay}"></TextBox>
-            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Grid.Column="0" Grid.Row="2">Comment</TextBlock>
+            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Grid.Column="0" Grid.Row="2"
+                       Margin="{StaticResource FormThickness}">Comment</TextBlock>
             <TextBox x:Name="CommentTxtBox"
                  Grid.Column="0" Grid.Row="3" Text="{Binding TxtComment, Mode=TwoWay}"></TextBox>
         </Grid>
-        <Button x:Name="SaveSrvAsNewBtn" RelativePanel.Below="GridSrvDetails">Save as new</Button>
-        <Button x:Name="OverwriteSrvBtn" RelativePanel.RightOf="SaveSrvAsNewBtn"
-                RelativePanel.Below="GridSrvDetails" Margin="5,0,0,0">Overwrite</Button>
+        <Button x:Name="SaveSrvAsNewBtn" RelativePanel.Below="GridSrvDetails" Command="{Binding SaveAsNew}"
+                Margin="{StaticResource FormThickness}">Save as new</Button>
+        <Button x:Name="OverwriteSrvBtn" RelativePanel.RightOf="SaveSrvAsNewBtn" Command="{Binding Overwrite}"
+                RelativePanel.Below="GridSrvDetails" Margin="5,10,0,0">Overwrite</Button>
+        <Button x:Name="RemoveSrvBtn" RelativePanel.RightOf="OverwriteSrvBtn" Command="{Binding Remove}"
+                RelativePanel.Below="GridSrvDetails" Margin="5,10,0,0">Remove</Button>
     </RelativePanel>
-</Page>
+</UserControl>

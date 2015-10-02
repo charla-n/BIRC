@@ -1,0 +1,78 @@
+﻿<Page
+    x:Class="BIRC.Views.AddServerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BIRC.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" DataContext="{StaticResource AddServerViewModelDataContext}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5" Padding="0,0,15,0">
+            <TextBlock x:Name="TitleTxt" Style="{ThemeResource TitleTextBlockStyle}" Margin="{StaticResource TitleThickness}">Add a connection</TextBlock>
+            <local:ServerListUserControl x:Name="ServerListUserControl" RelativePanel.Below="TitleTxt"/>
+            <Line x:Name="LineIdentity" RelativePanel.Below="ServerListUserControl"
+                      X1="2000" Y1="0" X2="0" Y2="0"  Margin="5,20,5,0" StrokeThickness="1" Stroke="Gray" Fill="Black"></Line>
+            <TextBlock Margin="{StaticResource DefaultThickness}" Style="{ThemeResource SubtitleTextBlockStyle}"
+                       RelativePanel.Below="LineIdentity" x:Name="YourIdentityTxt">Your identity</TextBlock>
+            <TextBlock x:Name="UsernameTxt" RelativePanel.Below="YourIdentityTxt"
+                       Style="{ThemeResource BaseTextBlockStyle}">Username</TextBlock>
+            <TextBox x:Name="UsernameTxtBox" RelativePanel.Below="UsernameTxt"
+                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                     Text="{Binding Username, Mode=TwoWay}"></TextBox>
+            <TextBlock x:Name="PasswordRequiredTxt" RelativePanel.Below="UsernameTxtBox"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}">Password required ?</TextBlock>
+            <ToggleSwitch x:Name="PasswordRequiredToggleBtn" RelativePanel.Below="PasswordRequiredTxt"
+                          OnContent="Yes" OffContent="No" Toggled="PasswordRequiredToggleBtn_Toggled"
+                          IsOn="{Binding PasswordRequired, Mode=TwoWay}"></ToggleSwitch>
+            <TextBlock x:Name="PasswordTxt" RelativePanel.Below="PasswordRequiredToggleBtn"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}" Visibility="Collapsed">Password</TextBlock>
+            <PasswordBox x:Name="PasswordTxtBox" RelativePanel.Below="PasswordTxt"
+                         RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                         PasswordChar="*" Visibility="Collapsed"></PasswordBox>
+            <TextBlock x:Name="NicknameTxt" RelativePanel.Below="PasswordTxtBox"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}">Nickname</TextBlock>
+            <TextBox x:Name="NicknameTxtBox" RelativePanel.Below="NicknameTxt"
+                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                     Text="{Binding Nickname, Mode=TwoWay}"></TextBox>
+            <TextBlock x:Name="RealNameTxt" RelativePanel.Below="NicknameTxtBox"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}">Real name</TextBlock>
+            <TextBox x:Name="RealNameTxtBox" RelativePanel.Below="RealNameTxt"
+                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                     Text="{Binding Realname, Mode=TwoWay}"></TextBox>
+            <TextBlock x:Name="GroupTxt" RelativePanel.Below="RealNameTxtBox"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}">Choose group</TextBlock>
+            <ComboBox x:Name="GroupComboBox" RelativePanel.Below="GroupTxt"
+                      RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                      ItemsSource="{Binding GroupList, Mode=TwoWay}" SelectedItem="{Binding GroupSelected, Mode=TwoWay}"></ComboBox>
+            <TextBlock x:Name="CreateGroupTxt" RelativePanel.Below="GroupComboBox"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}">Create group</TextBlock>
+            <TextBox x:Name="CreateGroupTxtBox" RelativePanel.Below="CreateGroupTxt"
+                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Margin="0,0,69,0"
+                     Text="{Binding NewGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <Button x:Name="CreateGroupBtn" RelativePanel.Below="CreateGroupTxt"
+                    RelativePanel.AlignRightWith="CreateGroupTxtBox" Command="{Binding CreateGroup}">Create</Button>
+            <TextBlock x:Name="UserModeTxt" RelativePanel.Below="CreateGroupTxtBox"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}">User modes</TextBlock>
+            <CheckBox x:Name="InvisibleUserMode" RelativePanel.Below="UserModeTxt" IsChecked="{Binding IsInvisible, Mode=TwoWay}">Invisible (+i)</CheckBox>
+            <CheckBox x:Name="WallopsUserMode" RelativePanel.Below="UserModeTxt"
+                      RelativePanel.RightOf="InvisibleUserMode" IsChecked="{Binding IsWallops, Mode=TwoWay}">Wallops (+w)</CheckBox>
+            <TextBlock x:Name="AutoConnectTxt" RelativePanel.Below="InvisibleUserMode"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Margin="{StaticResource FormThickness}">Auto connect ?</TextBlock>
+            <ToggleSwitch x:Name="AutoConnectToggleSwitch"
+                          RelativePanel.Below="AutoConnectTxt" OnContent="Yes" OffContent="No"
+                          IsOn="{Binding AutoConnect, Mode=TwoWay}"></ToggleSwitch>
+            <Button x:Name="AddConnectionBtn" RelativePanel.Below="AutoConnectToggleSwitch"
+                    Margin="{StaticResource FormThickness}" Command="{Binding AddConnection}"
+                    Click="AddConnectionBtn_Click">Add connection</Button>
+        </RelativePanel>
+    </ScrollViewer>
+</Page>

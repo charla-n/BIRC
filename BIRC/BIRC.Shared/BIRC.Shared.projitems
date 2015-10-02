@@ -16,6 +16,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Files\ServerList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Server.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\Encryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\LinqDistinctBy.cs" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Resources\en-US\ErrorResources.resw" />
