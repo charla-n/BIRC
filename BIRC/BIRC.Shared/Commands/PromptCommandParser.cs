@@ -14,18 +14,54 @@ namespace BIRC.Shared.Commands
     public static class PromptCommandParser
     {
         public static char[] SEPARATORS = { ' ' };
-        private static Dictionary<string, Action<IList<string>, Connection>> Commands = 
+        private static Dictionary<string, Action<IList<string>, Connection>> Commands =
             new Dictionary<string, Action<IList<string>, Connection>>()
         {
                 { "/server", Server },
-                { "/list", ListChan }
+                { "/list", ListChan },
+                { "/away", Away },
+                { "/help", Help },
+                { "/info", Info },
+                { "/join", Join },
         };
 
         public static void Parse(string cmd, Connection c, List<string> p)
         {
+            if (cmd != "/server" && cmd != "/help" && (c == null || !c.Connected))
+                return;
             if (!Commands.ContainsKey(cmd))
-                throw new ErrorBIRC(string.Format(MainPage.GetString("UnknownCommand"), cmd));
+                throw new ErrorBIRC(string.Format(MainPage.GetErrorString("UnknownCommand"), cmd));
             Commands[cmd].Invoke(p, c);
+        }
+
+        private static void Join(IList<string> list, Connection c)
+        {
+            if (list.Count == 1)
+                throw new ErrorBIRC(MainPage.GetErrorString("JoinNoParam"));
+
+        }
+
+        private static void Info(IList<string> list, Connection c)
+        {
+            c.Command.Info();
+        }
+
+        private static void Help(IList<string> list, Connection c)
+        {
+            if (list.Count == 1)
+                c.Command.WriteToHistory(MainPage.GetInfoString("Help"));
+            else
+                c.Command.WriteToHistory(MainPage.GetInfoString("Help" + list[1]));
+        }
+
+        private static void Away(IList<string> list, Connection c)
+        {
+            if (!c.Command.LocalUser.IsAway && list.Count == 1)
+                throw new ErrorBIRC(MainPage.GetErrorString("AwayNotEnoughArg"));
+            if (list.Count > 1)
+                c.Command.Away(string.Join(ReceivedCommandParser.SEPARATOR, list.Skip(1)));
+            else
+                c.Command.Away();
         }
 
         private static void ListChan(IList<string> list, Connection c)
@@ -41,7 +77,7 @@ namespace BIRC.Shared.Commands
             int port = 0;
 
             if (list.ElementAtOrDefault(1) == null)
-                throw new ErrorBIRC(MainPage.GetString("InvalidServerCmd"));
+                throw new ErrorBIRC(MainPage.GetErrorString("InvalidServerCmd"));
             if (list.ElementAtOrDefault(2) != null)
             {
                 if (int.TryParse(list[2], out port) == false)
@@ -63,7 +99,8 @@ namespace BIRC.Shared.Commands
             };
             Connection cur = ConnectionUtils.Add(newc);
             ((BIRCViewModel)MainPage.currentDataContext).ServerSelection = cur;
-            cur.Command.Connect();
+            if (!cur.Command.IsConnected())
+                cur.Command.Connect();
         }
     }
 }

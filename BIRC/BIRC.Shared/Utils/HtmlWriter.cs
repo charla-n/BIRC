@@ -13,12 +13,12 @@ namespace BIRC.Shared.Utils
 
         public static string WriteStartTag()
         {
-            return "<div>";
+            return "<table><tr>";
         }
 
         public static string WriteHour()
         {
-            return "<span style=\"" + TIME_STYLE + "\">[" + DateTime.Now.ToString("HH:mm:ss") + "]</span> ";
+            return "<td valign=\"top\" style=\"" + TIME_STYLE + "\">[" + DateTime.Now.ToString("HH:mm:ss") + "]</td> ";
         }
 
         public static string Write(string body)
@@ -28,22 +28,22 @@ namespace BIRC.Shared.Utils
 
         public static string WriteBody(string body)
         {
-            return "<span style=\"" + BODY_STYLE + "\">" + body + "</span>";
+            return "<td style=\"" + BODY_STYLE + "\">" + body + "</td>";
         }
 
         public static string WriteBody(string from, string body)
         {
-            return "@<span style=\"" + FROM_STYLE + "\"></span>" + WriteBody(body);
+            return "@<td style=\"" + FROM_STYLE + "\"></td>" + WriteBody(body);
         }
 
         public static string WriteError(string body)
         {
-            return WriteStartTag() + WriteHour() + "<span style=\"" + ERROR_STYLE + "\">" + body + "</span>" + WriteEndTag();
+            return WriteStartTag() + WriteHour() + "<td style=\"" + ERROR_STYLE + "\">" + body + "</td>" + WriteEndTag();
         }
 
         public static string WriteEndTag()
         {
-            return "</div>";
+            return "</tr></table>";
         }
     }
 }

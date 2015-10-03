@@ -123,6 +123,18 @@
   <data name="Disconnected" xml:space="preserve">
     <value>Disconnected from {0}:{1}</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>&lt;b&gt;Available commands :&lt;/b&gt;&lt;br/&gt;away&lt;br/&gt;list&lt;br/&gt;server&lt;br/&gt;&lt;br/&gt;Type '/help &amp;lt;command&amp;gt;' to get help for a specific command</value>
+  </data>
+  <data name="Helpaway" xml:space="preserve">
+    <value>/away &amp;lt;message&amp;gt;&lt;br/&gt;Provides the server with a message to automatically send in reply to a PRIVMSG directed at the user, but not to a channel they are on. If &amp;lt;message&amp;gt; is omitted, the away status is removed.</value>
+  </data>
+  <data name="Helplist" xml:space="preserve">
+    <value>/list [channels]&lt;br/&gt;Lists all channels on the server. If the comma-separated list [channels] is given, it will return the channel topics.</value>
+  </data>
+  <data name="Helpserver" xml:space="preserve">
+    <value>/server hostname [port] [password]&lt;br/&gt;Connect to a server. If port is not specified the default port (6667) will be used.</value>
+  </data>
   <data name="ListChannel" xml:space="preserve">
     <value>{0} ({1}) with {2} user(s)</value>
   </data>
@@ -137,6 +149,12 @@
   </data>
   <data name="RplMyInfo" xml:space="preserve">
     <value>Server {0} running on {1}, accepts user modes {2} and chan modes {3}</value>
+  </data>
+  <data name="SrvTime" xml:space="preserve">
+    <value>{0} time is {1}</value>
+  </data>
+  <data name="SrvVersion" xml:space="preserve">
+    <value>{0}({1}) is running on {2} and has {3} as debug level</value>
   </data>
   <data name="TryToConnect" xml:space="preserve">
     <value>Try to connect on {0}:{1}</value>

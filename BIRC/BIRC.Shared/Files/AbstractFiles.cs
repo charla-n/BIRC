@@ -47,7 +47,7 @@ namespace BIRC.Shared.Files
                 if (e is FileNotFoundException)
                     return null;
                 else if (e is UnauthorizedAccessException)
-                    throw new ErrorBIRC(string.Format(new ResourceLoader().GetString("FileUnauthorized"), filename));
+                    throw new ErrorBIRC(string.Format(MainPage.GetErrorString("FileUnauthorized"), filename));
                 else if (e is JsonReaderException || e is JsonSerializationException)
                 {
                     await file.DeleteAsync();
@@ -62,7 +62,7 @@ namespace BIRC.Shared.Files
             StorageFile file = null;
 
             if (ntry > 1)
-                throw new ErrorBIRC(string.Format(new ResourceLoader().GetString("FileWriteMaxTry"), filename));
+                throw new ErrorBIRC(string.Format(MainPage.GetErrorString("FileWriteMaxTry"), filename));
             try
             {
                 await OpenRoamingFolder();
@@ -79,7 +79,7 @@ namespace BIRC.Shared.Files
                     return;
                 }
                 else if (e is UnauthorizedAccessException)
-                    throw new ErrorBIRC(string.Format(new ResourceLoader().GetString("FileUnauthorized"), filename));
+                    throw new ErrorBIRC(string.Format(MainPage.GetErrorString("FileUnauthorized"), filename));
                 throw;
             }
 

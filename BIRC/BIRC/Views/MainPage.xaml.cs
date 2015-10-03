@@ -29,7 +29,8 @@ namespace BIRC
     {
         public static ViewModelBase currentDataContext;
         private static CoreDispatcher dispatcher;
-        private static ResourceLoader loader;
+        private static ResourceLoader infoloader;
+        private static ResourceLoader errorloader;
 
         public MainPage()
         {
@@ -40,7 +41,8 @@ namespace BIRC
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            loader = ResourceLoader.GetForCurrentView(App.RESOURCE_NAME);
+            infoloader = ResourceLoader.GetForCurrentView(App.RESOURCE_NAME);
+            errorloader = ResourceLoader.GetForCurrentView(App.ERROR_RESOURCE_NAME);
             currentDataContext = DataContext as ViewModelBase;
         }
 
@@ -52,9 +54,14 @@ namespace BIRC
                 action.Invoke();
         }
 
-        public static string GetString(string key)
+        public static string GetInfoString(string key)
         {
-            return loader.GetString(key);
+            return infoloader.GetString(key);
+        }
+
+        public static string GetErrorString(string key)
+        {
+            return errorloader.GetString(key);
         }
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)

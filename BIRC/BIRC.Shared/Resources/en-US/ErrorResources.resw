@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AwayNotEnoughArg" xml:space="preserve">
+    <value>You need to provide a message.&lt;br/&gt;Type /help away for getting help.</value>
+  </data>
   <data name="FileUnauthorized" xml:space="preserve">
     <value>Can't open {0}, permission denied</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="InvalidServerCmd" xml:space="preserve">
     <value>Invalid command. Usage is /server hostname [port] [password]</value>
+  </data>
+  <data name="JoinNoParam" xml:space="preserve">
+    <value>You need to provide parameters to /join command.&lt;br/&gt;Type /help join for getting help.</value>
   </data>
   <data name="UnknownCommand" xml:space="preserve">
     <value>Invalid command {0}</value>
