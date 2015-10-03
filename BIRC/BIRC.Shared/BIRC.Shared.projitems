@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Commands\Command.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\PromptCommandParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Commands\ReceivedCommandParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ErrorBIRC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PanicBIRC.cs" />
@@ -18,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Files\ServerList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Server.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\ConnectionUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\Encryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\HtmlWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\LinqDistinctBy.cs" />

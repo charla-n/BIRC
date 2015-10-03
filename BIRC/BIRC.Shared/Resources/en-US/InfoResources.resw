@@ -123,6 +123,9 @@
   <data name="Disconnected" xml:space="preserve">
     <value>Disconnected from {0}:{1}</value>
   </data>
+  <data name="ListChannel" xml:space="preserve">
+    <value>{0} ({1}) with {2} user(s)</value>
+  </data>
   <data name="Mode" xml:space="preserve">
     <value>Usermode {0}</value>
   </data>

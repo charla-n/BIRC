@@ -27,6 +27,7 @@ namespace BIRC
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static ViewModelBase currentDataContext;
         private static CoreDispatcher dispatcher;
         private static ResourceLoader loader;
 
@@ -40,6 +41,7 @@ namespace BIRC
         {
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             loader = ResourceLoader.GetForCurrentView(App.RESOURCE_NAME);
+            currentDataContext = DataContext as ViewModelBase;
         }
 
         public async static void RunActionOnUiThread(DispatchedHandler action)

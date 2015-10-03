@@ -289,8 +289,7 @@ namespace IrcDotNet
             sendEventArgs.Completed += SendCompleted;
 
             if (!this.socket.SendAsync(sendEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)SendCompleted).BeginInvoke(
-                    this.socket, sendEventArgs, null, null);
+                SendCompleted(null, sendEventArgs);
         }
 
         private void SendCompleted(object sender, SocketAsyncEventArgs e)
@@ -340,8 +339,7 @@ namespace IrcDotNet
             if (!this.socket.Connected)
                 return;
             if (!this.socket.ReceiveAsync(receiveEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)ReceiveCompleted).BeginInvoke(
-                    this.socket, receiveEventArgs, null, null);
+                ReceiveCompleted(null, receiveEventArgs);
         }
 
         private void ReceiveCompleted(object sender, SocketAsyncEventArgs e)
@@ -410,8 +408,7 @@ namespace IrcDotNet
             connectEventArgs.Completed += ConnectCompleted;
 
             if (!this.socket.ConnectAsync(connectEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)ConnectCompleted).BeginInvoke(
-                    this.socket, connectEventArgs, null, null);
+                ConnectCompleted(null, connectEventArgs);
         }
 
         private void ConnectCompleted(object sender, SocketAsyncEventArgs e)
@@ -469,6 +466,7 @@ namespace IrcDotNet
             try
             {
                 this.socket.Shutdown(SocketShutdown.Both);
+                socket.Dispose();
                 HandleClientDisconnected();
             }
             catch (SocketException exSocket)

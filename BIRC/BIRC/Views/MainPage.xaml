@@ -116,8 +116,9 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="52"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" x:Name="CommandTxtBox"></TextBox>
-                        <Button HorizontalAlignment="Center" Grid.Column="1" Style="{ThemeResource TextBlockButtonStyle}" x:Name="CommandBtn">
+                        <TextBox Grid.Column="0" x:Name="CommandTxtBox" Text="{Binding CommandTxt, Mode=TwoWay}"></TextBox>
+                        <Button HorizontalAlignment="Center" Grid.Column="1" Style="{ThemeResource TextBlockButtonStyle}" x:Name="CommandBtn"
+                                Command="{Binding CommandBtn}">
                             <SymbolIcon Symbol="Send"></SymbolIcon>
                         </Button>
                     </Grid>

@@ -15,12 +15,7 @@
                       X1="2000" Y1="0" X2="0" Y2="0"  Margin="5,20,5,0" StrokeThickness="1" Stroke="Gray" Fill="Black"></Line>
             <TextBlock Margin="{StaticResource DefaultThickness}" Style="{ThemeResource SubtitleTextBlockStyle}"
                        RelativePanel.Below="LineIdentity" x:Name="YourIdentityTxt">Your identity</TextBlock>
-            <TextBlock x:Name="UsernameTxt" RelativePanel.Below="YourIdentityTxt"
-                       Style="{ThemeResource BaseTextBlockStyle}">Username</TextBlock>
-            <TextBox x:Name="UsernameTxtBox" RelativePanel.Below="UsernameTxt"
-                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                     Text="{Binding Username, Mode=TwoWay}"></TextBox>
-            <TextBlock x:Name="PasswordRequiredTxt" RelativePanel.Below="UsernameTxtBox"
+            <TextBlock x:Name="PasswordRequiredTxt" RelativePanel.Below="YourIdentityTxt"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Margin="{StaticResource FormThickness}">Password required ?</TextBlock>
             <ToggleSwitch x:Name="PasswordRequiredToggleBtn" RelativePanel.Below="PasswordRequiredTxt"

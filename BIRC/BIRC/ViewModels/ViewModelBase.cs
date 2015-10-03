@@ -19,6 +19,11 @@ namespace BIRC.ViewModels
             }
         }
 
+        public void Changed(string control)
+        {
+            OnPropertyChanged(control);
+        }
+
         public abstract void Refresh();
     }
 }

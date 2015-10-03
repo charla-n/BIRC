@@ -26,6 +26,12 @@ namespace BIRC.Views
         public AddServerPage()
         {
             this.InitializeComponent();
+            this.Loaded += AddServerPage_Loaded;
+        }
+
+        private void AddServerPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainPage.currentDataContext = DataContext as ViewModelBase;
         }
 
         private void PasswordRequiredToggleBtn_Toggled(object sender, RoutedEventArgs e)

@@ -1,4 +1,6 @@
-﻿using BIRC.Shared.Files;
+﻿using BIRC.Shared.Commands;
+using BIRC.Shared.Exceptions;
+using BIRC.Shared.Files;
 using BIRC.Shared.Models;
 using BIRC.Views;
 using System;
@@ -14,17 +16,18 @@ namespace BIRC.ViewModels
 {
     public class BIRCViewModel : ViewModelBase
     {
-        private string connectTxt;
+        private string commandTxt;
         private object serverSelection;
         private RelayCommand AddConnectionCmd;
         private RelayCommand ConnectionCmd;
+        private RelayCommand CommandCmd;
 
         public BIRCViewModel()
         {
-            connectTxt = "Connect";
             RetrieveList();
             AddConnectionCmd = new RelayCommand(AddConnectionAction, () => true);
             ConnectionCmd = new RelayCommand(ConnectionAction, () => true);
+            CommandCmd = new RelayCommand(CommandAction, () => true);
         }
 
         public async void RetrieveList()
@@ -40,6 +43,20 @@ namespace BIRC.ViewModels
             if (serverSelection is Connection)
                 return (Connection)serverSelection;
             return (Connection)((RelativePanel)serverSelection).DataContext;
+        }
+
+        private void CommandAction()
+        {
+            try
+            {
+                string[] splitted = commandTxt.Split(PromptCommandParser.SEPARATORS);
+                PromptCommandParser.Parse(splitted[0], GetSelectedConnection(), splitted.ToList());
+            }
+            catch (ErrorBIRC e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
+            CommandTxt = null;
         }
 
         private void ConnectionAction()
@@ -64,11 +81,25 @@ namespace BIRC.ViewModels
         {
             get
             {
-                return connectTxt;
+                if (GetSelectedConnection() == null)
+                    return "Connect";
+                if (GetSelectedConnection().Connected)
+                    return "Disconnect";
+                else
+                    return "Connect";
+            }
+        }
+
+        public string CommandTxt
+        {
+            get
+            {
+                return commandTxt;
             }
             set
             {
-                connectTxt = value;
+                commandTxt = value;
+                OnPropertyChanged("CommandTxt");
             }
         }
 
@@ -82,6 +113,14 @@ namespace BIRC.ViewModels
                         Group = x.Key,
                         Items = x.ToList()
                     });
+            }
+        }
+
+        public ICommand CommandBtn
+        {
+            get
+            {
+                return CommandCmd;
             }
         }
 
@@ -107,27 +146,8 @@ namespace BIRC.ViewModels
             }
             set
             {
-                if (GetSelectedConnection() != null)
-                    GetSelectedConnection().PropertyChanged -= BIRCViewModel_PropertyChanged;
                 serverSelection = value;
-                if (GetSelectedConnection() != null)
-                    GetSelectedConnection().PropertyChanged += BIRCViewModel_PropertyChanged;
-            }
-        }
-
-        private void BIRCViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Connection.History))
-            {
-                OnPropertyChanged("WebViewContent");
-            }
-            else if (e.PropertyName == nameof(Connection.Connected))
-            {
-                if (GetSelectedConnection().Connected == false)
-                    connectTxt = "Connect";
-                else
-                    connectTxt = "Disconnect";
-                OnPropertyChanged("ConnectTxt");
+                OnPropertyChanged("ServerSelection");
             }
         }
 

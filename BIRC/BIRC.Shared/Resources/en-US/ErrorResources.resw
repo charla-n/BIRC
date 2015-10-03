@@ -123,4 +123,10 @@
   <data name="FileWriteMaxTry" xml:space="preserve">
     <value>Unable to create file {0}</value>
   </data>
+  <data name="InvalidServerCmd" xml:space="preserve">
+    <value>Invalid command. Usage is /server hostname [port] [password]</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Invalid command {0}</value>
+  </data>
 </root>

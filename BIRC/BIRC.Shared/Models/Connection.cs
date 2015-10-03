@@ -15,13 +15,13 @@ namespace BIRC.Shared.Models
         {
             Command = new Command();
             Command.Connection = this;
+            Group = DEFAULT_GROUP;
         }
 
         [JsonIgnore]
         public const string DEFAULT_GROUP = "Default";
 
         public Server Server { get; set; }
-        public string Username { get; set; }
         public bool RequirePassword { get; set; }
         public string Password { get; set; }
         public string Nickname { get; set; }
@@ -44,7 +44,9 @@ namespace BIRC.Shared.Models
             {
                 history = value;
                 MainPage.RunActionOnUiThread(() =>
-                { OnPropertyChanged("History"); });
+                {
+                    MainPage.currentDataContext.Changed("WebViewContent");
+                });
             }
         }
         [JsonIgnore]
@@ -59,7 +61,9 @@ namespace BIRC.Shared.Models
             {
                 connected = value;
                 MainPage.RunActionOnUiThread(() =>
-                { OnPropertyChanged("Connected"); });
+                {
+                    MainPage.currentDataContext.Changed("ConnectTxt");
+                });
             }
         }
 

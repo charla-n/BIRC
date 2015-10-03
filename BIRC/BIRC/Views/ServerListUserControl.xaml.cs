@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BIRC.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,9 +23,15 @@ namespace BIRC.Views
         public ServerListUserControl()
         {
             this.InitializeComponent();
+            Loaded += ServerListUserControl_Loaded;
         }
 
-        private void PortTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ServerListUserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainPage.currentDataContext = DataContext as ViewModelBase;
+        }
+
+    private void PortTxtBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (PortTxtBox.Text.Length == 0)
                 return;

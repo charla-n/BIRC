@@ -25,7 +25,6 @@ namespace BIRC.ViewModels
         private string txtHostname;
         private string txtPort;
         private string txtComment;
-        private string username;
         private bool passwordRequired;
         private string nickname;
         private string realname;
@@ -115,7 +114,7 @@ namespace BIRC.ViewModels
                 modes.Add('i');
             if (isWallops)
                 modes.Add('w');
-            ConnectionFile.Instance().Connections.Add(new Connection()
+            ConnectionUtils.Add(new Connection()
             {
                 AutoConnect = autoConnect,
                 Nickname = nickname,
@@ -128,12 +127,10 @@ namespace BIRC.ViewModels
                     Name = txtHostname,
                     Port = txtPort == null ? null : (int?)int.Parse(txtPort)
                 },
-                Username = username,
                 Group = groupSelected == null ? groupList[0] : groupSelected,
                 UserModes = modes.ToArray()
             });
             password = null;
-            ConnectionFile.Instance().WriteImpl(ConnectionFile.Instance().Connections);
             NavigateToMainPage();
         }
 
@@ -281,7 +278,7 @@ namespace BIRC.ViewModels
                 List<Connection> list = ConnectionFile.Instance().Connections;
                 if (list != null)
                 {
-                    groupList.AddRange(list.DistinctBy(p => p.Group).Select(p => p.Group));
+                    groupList.AddRange(list.DistinctBy(p => p.Group).Select(p => p.Group).Where(p => p != Connection.DEFAULT_GROUP));
                 }
                 return groupList;
             }
@@ -392,18 +389,6 @@ namespace BIRC.ViewModels
                 txtSearch = value;
                 OnPropertyChanged("TxtSearch");
                 list.Refresh();
-            }
-        }
-
-        public string Username
-        {
-            get
-            {
-                return username;
-            }
-            set
-            {
-                username = value;
             }
         }
 

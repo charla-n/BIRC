@@ -16,7 +16,6 @@ namespace BIRC.Shared.Commands
 
         public Command()
         {
-            client = new StandardIrcClient();
         }
 
         public Connection Connection
@@ -29,7 +28,14 @@ namespace BIRC.Shared.Commands
 
         public bool IsConnected()
         {
+            if (client == null)
+                return false;
             return client.IsConnected;
+        }
+
+        public void ListChannel(IEnumerable<string> list)
+        {
+            client.ListChannels(list);
         }
 
         public void Unregister()
@@ -60,10 +66,14 @@ namespace BIRC.Shared.Commands
         public void Disconnect()
         {
             client.Disconnect();
+            client.Dispose();
+            client = null;
         }
 
         public async void Connect()
         {
+            client = new StandardIrcClient();
+
             client.ChannelListReceived += Client_ChannelListReceived;
             client.ClientInfoReceived += Client_ClientInfoReceived;
             client.Connected += Client_Connected;
@@ -91,11 +101,11 @@ namespace BIRC.Shared.Commands
             client.Connect(connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port,
                 false, new IrcUserRegistrationInfo()
                 {
-                    NickName = string.IsNullOrWhiteSpace(connection.Nickname) ? connection.Username : connection.Nickname,
+                    NickName = string.IsNullOrWhiteSpace(connection.Nickname) ? App.APPNAME : connection.Nickname,
                     Password = string.IsNullOrWhiteSpace(connection.Password) ? null : await Encryption.UnProtect(connection.Password),
-                    RealName = connection.RealName == null ? "" : connection.RealName,
+                    RealName = connection.RealName == null ? App.APPNAME : connection.RealName,
                     UserModes = connection.UserModes,
-                    UserName = connection.Username
+                    UserName = App.APPNAME
                 });
         }
 
@@ -142,12 +152,12 @@ namespace BIRC.Shared.Commands
 
         private void Client_RawMessageReceived(object sender, IrcRawMessageEventArgs e)
         {
-            string res = HtmlWriter.Write(ReceivedCommandParser.Parse(e.Message.Command, (string[])e.Message.Parameters, connection));
+            string res = ReceivedCommandParser.Parse(e.Message.Command, (string[])e.Message.Parameters, connection);
 
             if (res == null)
-                connection.History += e.RawContent;
+                connection.History += HtmlWriter.Write(e.RawContent);
             else
-                connection.History += res;
+                connection.History += HtmlWriter.Write(res);
         }
 
         private void Client_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
@@ -169,6 +179,7 @@ namespace BIRC.Shared.Commands
 
         private void Client_Error(object sender, IrcErrorEventArgs e)
         {
+            connection.History += HtmlWriter.WriteError(e.Error.Message);
         }
 
         private void Client_Disconnected(object sender, EventArgs e)
@@ -198,6 +209,11 @@ namespace BIRC.Shared.Commands
 
         private void Client_ChannelListReceived(object sender, IrcChannelListReceivedEventArgs e)
         {
+            StringBuilder builder = new StringBuilder();
+
+            foreach (IrcChannelInfo info in e.Channels)
+                builder.Append(HtmlWriter.Write(string.Format(MainPage.GetString("ListChannel"), info.Name, info.Topic, info.VisibleUsersCount)));
+            connection.History += builder.ToString();
         }
     }
 }
