@@ -293,6 +293,7 @@ namespace BIRC.Shared.Commands
             client.WhoIsReplyReceived -= Client_WhoIsReplyReceived;
             client.WhoReplyReceived -= Client_WhoReplyReceived;
             client.WhoWasReplyReceived -= Client_WhoWasReplyReceived;
+            UnregisterLocalUser();
         }
 
         public void UnregisterLocalUser()

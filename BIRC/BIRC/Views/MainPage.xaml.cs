@@ -82,5 +82,16 @@ namespace BIRC
         {
             ShowFlyout(sender);
         }
+
+        private void CommandTxtBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                BIRCViewModel vm = ((BIRCViewModel)DataContext);
+
+                vm.CommandTxt = CommandTxtBox.Text;
+                vm.CommandAction();
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Files\AbstractFiles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Files\ConnectionFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Files\ServerList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Channel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ConnectionUtils.cs" />

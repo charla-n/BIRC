@@ -31,6 +31,8 @@ namespace BIRC.Shared.Models
         public bool AutoConnect { get; set; }
 
         [JsonIgnore]
+        public List<Channel> Channels { get; set; }
+        [JsonIgnore]
         public Command Command { get; set; }
         [JsonIgnore]
         private string history;
@@ -66,6 +68,8 @@ namespace BIRC.Shared.Models
                 });
             }
         }
+        [JsonIgnore]
+        public bool IsDefault { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

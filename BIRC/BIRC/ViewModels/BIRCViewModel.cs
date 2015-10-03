@@ -16,6 +16,7 @@ namespace BIRC.ViewModels
 {
     public class BIRCViewModel : ViewModelBase
     {
+        private Connection defaultConnection;
         private string commandTxt;
         private object serverSelection;
         private RelayCommand AddConnectionCmd;
@@ -24,6 +25,7 @@ namespace BIRC.ViewModels
 
         public BIRCViewModel()
         {
+            defaultConnection = new Connection() { IsDefault = true };
             RetrieveList();
             AddConnectionCmd = new RelayCommand(AddConnectionAction, () => true);
             ConnectionCmd = new RelayCommand(ConnectionAction, () => true);
@@ -45,12 +47,13 @@ namespace BIRC.ViewModels
             return (Connection)((RelativePanel)serverSelection).DataContext;
         }
 
-        private void CommandAction()
+        public void CommandAction()
         {
             try
             {
+                Connection c = GetSelectedConnection();
                 string[] splitted = commandTxt.Split(PromptCommandParser.SEPARATORS);
-                PromptCommandParser.Parse(splitted[0], GetSelectedConnection(), splitted.ToList());
+                PromptCommandParser.Parse(splitted[0], c == null ? defaultConnection : c, splitted.ToList());
             }
             catch (ErrorBIRC e)
             {
@@ -72,7 +75,7 @@ namespace BIRC.ViewModels
             get
             {
                 if (GetSelectedConnection() == null)
-                    return string.Empty;
+                    return defaultConnection.History;
                 return GetSelectedConnection().History;
             }
         }

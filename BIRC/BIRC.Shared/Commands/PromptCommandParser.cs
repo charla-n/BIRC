@@ -14,6 +14,7 @@ namespace BIRC.Shared.Commands
     public static class PromptCommandParser
     {
         public static char[] SEPARATORS = { ' ' };
+        public static char[] COMMA_SEPARATORS = { ',' };
         private static Dictionary<string, Action<IList<string>, Connection>> Commands =
             new Dictionary<string, Action<IList<string>, Connection>>()
         {
@@ -27,7 +28,7 @@ namespace BIRC.Shared.Commands
 
         public static void Parse(string cmd, Connection c, List<string> p)
         {
-            if (cmd != "/server" && cmd != "/help" && (c == null || !c.Connected))
+            if (cmd != "/server" && cmd != "/help" && (c.IsDefault || !c.Connected))
                 return;
             if (!Commands.ContainsKey(cmd))
                 throw new ErrorBIRC(string.Format(MainPage.GetErrorString("UnknownCommand"), cmd));
@@ -38,7 +39,18 @@ namespace BIRC.Shared.Commands
         {
             if (list.Count == 1)
                 throw new ErrorBIRC(MainPage.GetErrorString("JoinNoParam"));
+            if (list.Count == 2)
+                c.Command.Join(list[1].Split(COMMA_SEPARATORS));
+            else
+            {
+                List<Tuple<string, string>> result = new List<Tuple<string, string>>();
+                string[] channels = list[1].Split(COMMA_SEPARATORS);
+                string[] keys = list[2].Split(COMMA_SEPARATORS);
 
+                for (int i = 0; i < channels.Length; i++)
+                    result.Add(Tuple.Create(channels[i], keys.ElementAtOrDefault(i)));
+                c.Command.Join(result);
+            }
         }
 
         private static void Info(IList<string> list, Connection c)
