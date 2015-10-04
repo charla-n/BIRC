@@ -16,6 +16,9 @@ namespace BIRC.ViewModels
 {
     public class BIRCViewModel : ViewModelBase
     {
+        public event Action OnAfterServerSelectionChanged;
+        public event Action OnBeforeServerSelectionChanged;
+
         private Connection defaultConnection;
         private string commandTxt;
         private object serverSelection;
@@ -25,6 +28,7 @@ namespace BIRC.ViewModels
 
         public BIRCViewModel()
         {
+            commandTxt = string.Empty;
             defaultConnection = new Connection() { IsDefault = true };
             RetrieveList();
             AddConnectionCmd = new RelayCommand(AddConnectionAction, () => true);
@@ -41,7 +45,7 @@ namespace BIRC.ViewModels
         public Connection GetSelectedConnection()
         {
             if (serverSelection == null)
-                return null;
+                return defaultConnection;
             if (serverSelection is Connection)
                 return (Connection)serverSelection;
             return (Connection)((RelativePanel)serverSelection).DataContext;
@@ -53,12 +57,13 @@ namespace BIRC.ViewModels
             {
                 Connection c = GetSelectedConnection();
                 string[] splitted = commandTxt.Split(PromptCommandParser.SEPARATORS);
-                PromptCommandParser.Parse(splitted[0], c == null ? defaultConnection : c, splitted.ToList());
+                PromptCommandParser.Parse(splitted[0], c, splitted.ToList());
             }
             catch (ErrorBIRC e)
             {
                 System.Diagnostics.Debug.WriteLine(e.Message);
             }
+            GetSelectedConnection().CommandHistory.Add(commandTxt);
             CommandTxt = null;
         }
 
@@ -70,15 +75,15 @@ namespace BIRC.ViewModels
                 GetSelectedConnection().Command.Connect();
         }
 
-        public string WebViewContent
-        {
-            get
-            {
-                if (GetSelectedConnection() == null)
-                    return defaultConnection.History;
-                return GetSelectedConnection().History;
-            }
-        }
+        //public string WebViewContent
+        //{
+        //    get
+        //    {
+        //        if (GetSelectedConnection() == null)
+        //            return defaultConnection.History;
+        //        return GetSelectedConnection().History;
+        //    }
+        //}
 
         public string ConnectTxt
         {
@@ -149,7 +154,9 @@ namespace BIRC.ViewModels
             }
             set
             {
+                OnBeforeServerSelectionChanged?.Invoke();
                 serverSelection = value;
+                OnAfterServerSelectionChanged?.Invoke();
                 OnPropertyChanged("ServerSelection");
             }
         }

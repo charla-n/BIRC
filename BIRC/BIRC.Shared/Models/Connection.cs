@@ -1,4 +1,5 @@
 ﻿using BIRC.Shared.Commands;
+using BIRC.Shared.Utils;
 using IrcDotNet;
 using Newtonsoft.Json;
 using System;
@@ -9,13 +10,25 @@ using Windows.UI.Core;
 
 namespace BIRC.Shared.Models
 {
+//    <script>
+//    window.setInterval(function()
+//    {
+//        var x = document.getElementsByClassName('bottom');
+//        x[x.length - 1].scrollIntoView();
+//    }, 100);
+//</script>
+
     public class Connection : INotifyPropertyChanged
     {
+        public event Action<string> OnAddHistory;
+
         public Connection()
         {
             Command = new Command();
+            CommandHistory = new HistoryList();
             Command.Connection = this;
             Group = DEFAULT_GROUP;
+            history = string.Empty;
         }
 
         [JsonIgnore]
@@ -33,6 +46,8 @@ namespace BIRC.Shared.Models
         [JsonIgnore]
         public List<Channel> Channels { get; set; }
         [JsonIgnore]
+        public HistoryList CommandHistory { get; set; }
+        [JsonIgnore]
         public Command Command { get; set; }
         [JsonIgnore]
         private string history;
@@ -41,14 +56,6 @@ namespace BIRC.Shared.Models
             get
             {
                 return history;
-            }
-            set
-            {
-                history = value;
-                MainPage.RunActionOnUiThread(() =>
-                {
-                    MainPage.currentDataContext.Changed("WebViewContent");
-                });
             }
         }
         [JsonIgnore]
@@ -79,6 +86,12 @@ namespace BIRC.Shared.Models
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public void AddHistory(string historyToAdd)
+        {
+            history += historyToAdd;
+            OnAddHistory?.Invoke(historyToAdd);
         }
     }
 }

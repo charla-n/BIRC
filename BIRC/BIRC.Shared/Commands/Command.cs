@@ -48,12 +48,12 @@ namespace BIRC.Shared.Commands
 
         public void WriteToHistory(string msg)
         {
-            connection.History += HtmlWriter.Write(msg);
+            connection.AddHistory(HtmlWriter.Write(msg));
         }
 
         public void Info()
         {
-            connection.History += HtmlWriter.Write(client.LocalUser.ServerInfo);
+            connection.AddHistory(HtmlWriter.Write(client.LocalUser.ServerInfo));
         }
 
         public void Disconnect()
@@ -109,8 +109,8 @@ namespace BIRC.Shared.Commands
             client.WhoReplyReceived += Client_WhoReplyReceived;
             client.WhoWasReplyReceived += Client_WhoWasReplyReceived;
 
-            connection.History += HtmlWriter.Write(string.Format(MainPage.GetInfoString("TryToConnect"),
-                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port));
+            connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("TryToConnect"),
+                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port)));
             if (string.IsNullOrWhiteSpace(connection.Nickname))
                 connection.Nickname = App.APPNAME + new Random().Next(int.MinValue, int.MaxValue);
             if (string.IsNullOrWhiteSpace(connection.RealName))
@@ -140,14 +140,14 @@ namespace BIRC.Shared.Commands
 
         private void Client_ServerVersionInfoReceived(object sender, IrcServerVersionInfoEventArgs e)
         {
-            connection.History += HtmlWriter.Write(string.Format(MainPage.GetInfoString("SrvVersion"),
-                e.ServerName, e.Comments, e.Version, e.DebugLevel));
+            connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("SrvVersion"),
+                e.ServerName, e.Comments, e.Version, e.DebugLevel)));
         }
 
         private void Client_ServerTimeReceived(object sender, IrcServerTimeEventArgs e)
         {
-            connection.History += HtmlWriter.Write(string.Format(MainPage.GetInfoString("SrvTime"),
-                e.ServerName, e.DateTime));
+            connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("SrvTime"),
+                e.ServerName, e.DateTime)));
         }
 
         private void Client_ServerStatsReceived(object sender, IrcServerStatsReceivedEventArgs e)
@@ -164,7 +164,7 @@ namespace BIRC.Shared.Commands
 
         private void Client_Registered(object sender, EventArgs e)
         {
-            connection.History += HtmlWriter.Write(string.Format(MainPage.GetInfoString("Registered"), connection.Nickname));
+            connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("Registered"), connection.Nickname)));
             client.LocalUser.InviteReceived += LocalUser_InviteReceived;
             client.LocalUser.JoinedChannel += LocalUser_JoinedChannel;
             client.LocalUser.LeftChannel += LocalUser_LeftChannel;
@@ -183,14 +183,14 @@ namespace BIRC.Shared.Commands
             if (res == ReceivedCommandParser.IGNORE)
                 return;
             else if (res == null)
-                connection.History += HtmlWriter.Write(e.RawContent);
+                connection.AddHistory(HtmlWriter.Write(e.RawContent));
             else
-                connection.History += HtmlWriter.Write(res);
+                connection.AddHistory(HtmlWriter.Write(res));
         }
 
         private void Client_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            connection.History += HtmlWriter.WriteError(e.Message);
+            connection.AddHistory(HtmlWriter.WriteError(e.Message));
         }
 
         private void Client_MotdReceived(object sender, EventArgs e)
@@ -199,33 +199,33 @@ namespace BIRC.Shared.Commands
 
         private void Client_ErrorMessageReceived(object sender, IrcErrorMessageEventArgs e)
         {
-            connection.History += HtmlWriter.WriteError(e.Message);
+            connection.AddHistory(HtmlWriter.WriteError(e.Message));
         }
 
         private void Client_Error(object sender, IrcErrorEventArgs e)
         {
-            connection.History += HtmlWriter.WriteError(e.Error.Message);
+            connection.AddHistory(HtmlWriter.WriteError(e.Error.Message));
         }
 
         private void Client_Disconnected(object sender, EventArgs e)
         {
             connection.Connected = false;
-            connection.History += HtmlWriter.Write(string.Format(MainPage.GetInfoString("Disconnected"),
-                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port));
+            connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("Disconnected"),
+                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port)));
             Unregister();
         }
 
         private void Client_ConnectFailed(object sender, IrcErrorEventArgs e)
         {
-            connection.History += HtmlWriter.WriteError(e.Error.Message);
+            connection.AddHistory(HtmlWriter.WriteError(e.Error.Message));
             Unregister();
         }
 
         private void Client_Connected(object sender, EventArgs e)
         {
             connection.Connected = true;
-            connection.History += HtmlWriter.Write(string.Format(MainPage.GetInfoString("Connected"),
-                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port));
+            connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("Connected"),
+                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port)));
         }
 
         private void Client_ChannelListReceived(object sender, IrcChannelListReceivedEventArgs e)
@@ -234,7 +234,9 @@ namespace BIRC.Shared.Commands
 
             foreach (IrcChannelInfo info in e.Channels)
                 builder.Append(HtmlWriter.Write(string.Format(MainPage.GetInfoString("ListChannel"), info.Name, info.Topic, info.VisibleUsersCount)));
-            connection.History += builder.ToString();
+            if (e.Channels.Count == 0)
+                builder.Append(HtmlWriter.Write(MainPage.GetInfoString("NoChannels")));
+            connection.AddHistory(builder.ToString());
         }
 
         private void LocalUser_NoticeSent(object sender, IrcMessageEventArgs e)

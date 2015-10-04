@@ -6,10 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ext="using:BIRC.Utils"
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:common="using:WinRT_RichTextBlock.Html2Xaml"
     mc:Ignorable="d" DataContext="{StaticResource BIRCViewModelDataContext}">
 
     <Page.Resources>
@@ -101,21 +98,17 @@
             </SplitView.Pane>
             <SplitView.Content>
                 <RelativePanel x:Name="MainPanel" Margin="5,32,5,0">
-                    <ScrollViewer x:Name="RichTextBlockScroll" 
-                                  
-                                  RelativePanel.AlignLeftWithPanel="True" 
-                                  RelativePanel.AlignRightWithPanel="True"
-                                  RelativePanel.AlignTopWithPanel="True"
-                                  RelativePanel.AlignBottomWithPanel="True"
-                                  Margin="0,0,0,36">
-                        <WebView x:Name="WebView" ext:WebViewExtension.HTML="{Binding WebViewContent, Mode=TwoWay}"
-                                 ScrollViewer.VerticalScrollBarVisibility="Visible">
-                        </WebView>
-                    </ScrollViewer>
+                    <WebView x:Name="WebView" Source="ms-appx-web:///assets/base.html"
+                             RelativePanel.AlignLeftWithPanel="True" 
+                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignTopWithPanel="True"
+                             RelativePanel.AlignBottomWithPanel="True"
+                             Margin="0,0,0,36">
+                    </WebView>
                     <Grid Height="32" x:Name="GridCommand" 
                           RelativePanel.AlignLeftWithPanel="True" 
                           RelativePanel.AlignRightWithPanel="True"
-                          RelativePanel.AlignBottomWith="RichTextBlockScroll" Margin="0,0,5,0">
+                          RelativePanel.AlignBottomWith="WebView" Margin="0,0,5,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="52"/>

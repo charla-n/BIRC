@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ConnectionUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\Encryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\HistoryList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\HtmlWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\LinqDistinctBy.cs" />
   </ItemGroup>

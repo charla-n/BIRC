@@ -101,7 +101,6 @@
     </Compile>
     <Compile Include="Utils\ICollectionFilter\ICollectionViewEx.cs" />
     <Compile Include="Utils\ICollectionFilter\ListCollectionView.cs" />
-    <Compile Include="Utils\WebViewExtension.cs" />
     <Compile Include="ViewModels\AddServerViewModel.cs" />
     <Compile Include="ViewModels\BIRCViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
@@ -124,6 +123,8 @@
     <None Include="BIRC_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\base.html" />
+    <Content Include="Assets\jquery-2.1.4.min.js" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

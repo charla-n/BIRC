@@ -44,6 +44,35 @@ namespace BIRC
             infoloader = ResourceLoader.GetForCurrentView(App.RESOURCE_NAME);
             errorloader = ResourceLoader.GetForCurrentView(App.ERROR_RESOURCE_NAME);
             currentDataContext = DataContext as ViewModelBase;
+            ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory += MainPage_OnAddHistory;
+            ((BIRCViewModel)currentDataContext).OnBeforeServerSelectionChanged += CurrentDataContext_OnBeforeServerSelectionChanged;
+            ((BIRCViewModel)currentDataContext).OnAfterServerSelectionChanged += CurrentDataContext_OnAfterServerSelectionChanged;
+        }
+
+        private async void CurrentDataContext_OnAfterServerSelectionChanged()
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory += MainPage_OnAddHistory;
+                await WebView.InvokeScriptAsync("replaceContent",
+                    new string[] { ((BIRCViewModel)currentDataContext).GetSelectedConnection().History });
+            });
+        }
+
+        private async void CurrentDataContext_OnBeforeServerSelectionChanged()
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory -= MainPage_OnAddHistory;
+            });
+        }
+
+        private async void MainPage_OnAddHistory(string obj)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await WebView.InvokeScriptAsync("insertContent", new string[] { obj });
+            });
         }
 
         public async static void RunActionOnUiThread(DispatchedHandler action)
@@ -85,12 +114,23 @@ namespace BIRC
 
         private void CommandTxtBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
+            BIRCViewModel vm = ((BIRCViewModel)DataContext);
+
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                BIRCViewModel vm = ((BIRCViewModel)DataContext);
-
+                e.Handled = true;
                 vm.CommandTxt = CommandTxtBox.Text;
                 vm.CommandAction();
+            }
+            else if (e.Key == Windows.System.VirtualKey.Up)
+            {
+                e.Handled = true;
+                vm.CommandTxt = vm.GetSelectedConnection().CommandHistory.UpHistory();
+            }
+            else if (e.Key == Windows.System.VirtualKey.Down)
+            {
+                e.Handled = true;
+                vm.CommandTxt = vm.GetSelectedConnection().CommandHistory.DownHistory();
             }
         }
     }

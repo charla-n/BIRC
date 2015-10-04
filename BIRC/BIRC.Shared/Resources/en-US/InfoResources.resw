@@ -141,6 +141,9 @@
   <data name="Mode" xml:space="preserve">
     <value>Usermode {0}</value>
   </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>No channels</value>
+  </data>
   <data name="PingRec" xml:space="preserve">
     <value>Received ping, sent pong ({0})</value>
   </data>
