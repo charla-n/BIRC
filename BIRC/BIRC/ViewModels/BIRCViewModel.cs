@@ -6,6 +6,7 @@ using BIRC.Shared.Utils;
 using BIRC.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,14 +24,12 @@ namespace BIRC.ViewModels
         private Connection defaultConnection;
         private string commandTxt;
         private object serverSelection;
-        private AHistory channelSelection;
         private RelayCommand AddConnectionCmd;
         private RelayCommand ConnectionCmd;
         private RelayCommand CommandCmd;
 
         public BIRCViewModel()
         {
-            channelSelection = null;
             commandTxt = string.Empty;
             defaultConnection = new Connection() { IsDefault = true };
             RetrieveList();
@@ -42,16 +41,15 @@ namespace BIRC.ViewModels
         public async void RetrieveList()
         {
             await ConnectionFile.Instance().ReadImpl();
-            OnPropertyChanged("ByServers");
         }
 
         public AHistory GetSelectedConnection()
         {
             if (serverSelection == null)
                 return defaultConnection;
-            if (serverSelection is Connection)
-                return (Connection)serverSelection;
-            return (Connection)((TextBlock)serverSelection).DataContext;
+            if (serverSelection is AHistory)
+                return (AHistory)serverSelection;
+            return (AHistory)((TextBlock)serverSelection).DataContext;
         }
 
         public void CommandAction()
@@ -72,7 +70,7 @@ namespace BIRC.ViewModels
 
         private void ConnectionAction()
         {
-            Connection co = ConnectionUtils.ConnectionFromAHistory(GetSelectedConnection());
+            Connection co = GetSelectedConnection() as Connection;
 
             if (co.Command.IsConnected())
                 co.Command.Disconnect();
@@ -88,7 +86,7 @@ namespace BIRC.ViewModels
 
                 if (GetSelectedConnection() == null)
                     return "Connect";
-                co = ConnectionUtils.ConnectionFromAHistory(GetSelectedConnection());
+                co = GetSelectedConnection() as Connection;
                 if (co.Connected)
                     return "Disconnect";
                 else
@@ -109,24 +107,11 @@ namespace BIRC.ViewModels
             }
         }
 
-        public IEnumerable<object> ByServers
+        public IEnumerable<AHistory> ByServers
         {
             get
             {
-                return ConnectionFile.Instance().Connections.GroupBy(x => x.Group)
-                    .Select(x => new
-                    {
-                        Group = x.Key,
-                        Items = x.ToList()
-                    });
-            }
-        }
-
-        public AHistory ChannelSelection
-        {
-            get
-            {
-                return channelSelection;
+                return ConnectionFile.Instance().Connections;
             }
         }
 

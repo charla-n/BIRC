@@ -8,9 +8,6 @@
     mc:Ignorable="d" DataContext="{StaticResource BIRCViewModelDataContext}">
 
     <Page.Resources>
-        <CollectionViewSource x:Key="CollectionViewSourceServersKey" x:Name="CollectionViewSourceServers" 
-                              Source="{Binding ByServers}" ItemsPath="Items" IsSourceGrouped="True">
-        </CollectionViewSource>
         <MenuFlyout x:Key="ServerFlyout">
             <MenuFlyoutItem Text="{Binding ConnectTxt, Mode=TwoWay}" Command="{Binding Connect}" DataContext="{StaticResource BIRCViewModelDataContext}"></MenuFlyoutItem>
         </MenuFlyout>
@@ -52,41 +49,16 @@
                         <RowDefinition Height="42"/>
                     </Grid.RowDefinitions>
                     <ListView x:Name="serverListView" Grid.Row="1"
-                          ItemsSource="{Binding Source={StaticResource CollectionViewSourceServersKey}}"
+                          ItemsSource="{Binding ByServers}"
                           IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}"
                           >
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="{Binding Group}"/>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                            </Style>
-                        </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <RelativePanel
                                         x:Name="serverStackPanel">
-                                    <TextBlock x:Name="ServerNameTxt" Text="{Binding Server.Name}"
+                                    <TextBlock x:Name="ServerNameTxt" Text="{Binding Name}"
                                                FlyoutBase.AttachedFlyout="{StaticResource ServerFlyout}" Margin="0,0,5,0"
                                                RightTapped="serverStackPanel_RightTapped"></TextBlock>
-                                    <ListView x:Name="Channels" RelativePanel.Below="ServerNameTxt"
-                                              ItemsSource="{Binding Channels, Mode=TwoWay}" SelectedItem="{Binding ChannelSelection, Mode=TwoWay}"
-                                              RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                                              >
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Name}"></TextBlock>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
                                 </RelativePanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

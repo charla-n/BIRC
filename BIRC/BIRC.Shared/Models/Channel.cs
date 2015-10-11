@@ -12,7 +12,8 @@ namespace BIRC.Shared.Models
             history = string.Empty;
         }
 
-        public string Name { get; set; }
+        [JsonIgnore]
+        public string RealName { get; set; }
         [JsonIgnore]
         public Connection ParentConnection { get; set; }
     }

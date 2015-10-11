@@ -30,26 +30,20 @@ namespace BIRC.ViewModels
         private string realname;
         private bool autoConnect;
         private string password;
-        private string newgroup;
-        private string groupSelected;
         private bool isInvisible;
         private bool isWallops;
-        private List<string> groupList;
         private Server listSelectedItem;
         private RelayCommand saveAsNewCmd;
         private RelayCommand overwriteCmd;
         private RelayCommand removeCmd;
         private RelayCommand addConnection;
-        private RelayCommand createGroup;
 
         public AddServerViewModel()
         {
-            groupList = new List<string>() { Connection.DEFAULT_GROUP };
             saveAsNewCmd = new RelayCommand(SaveAsNewAction, CanSaveAsNew);
             overwriteCmd = new RelayCommand(OverwriteAction, CanOverwrite);
             removeCmd = new RelayCommand(RemoveAction, CanRemove);
             addConnection = new RelayCommand(AddConnectionAction, CanAddConnection);
-            createGroup = new RelayCommand(CreateGroupAction, CanCreateGroup);
             txtSearch = string.Empty;
             list = new ListCollectionView();
             list.Filter = p =>
@@ -86,26 +80,6 @@ namespace BIRC.ViewModels
             txtComment = null;
         }
 
-        private void CreateGroupAction()
-        {
-            groupList.Add(newgroup);
-            OnPropertyChanged("GroupList");
-            NewGroup = string.Empty;
-            OnPropertyChanged("NewGroup");
-            createGroup.RaiseCanExecuteChanged();
-            GroupSelected = newgroup;
-            OnPropertyChanged("GroupSelected");
-        }
-
-        private bool CanCreateGroup()
-        {
-            if (string.IsNullOrWhiteSpace(newgroup))
-                return false;
-            if (groupList.Contains(newgroup))
-                return false;
-            return true;
-        }
-
         private async void AddConnectionAction()
         {
             List<char> modes = new List<char>();
@@ -121,13 +95,8 @@ namespace BIRC.ViewModels
                 Password = await Encryption.Protect(password),
                 RealName = realname,
                 RequirePassword = passwordRequired,
-                Server = new Server()
-                {
-                    Comment = txtComment,
-                    Name = txtHostname,
-                    Port = txtPort == null ? null : (int?)int.Parse(txtPort)
-                },
-                Group = groupSelected == null ? groupList[0] : groupSelected,
+                Name = txtHostname,
+                Port = txtPort == null ? null : (int?)int.Parse(txtPort),
                 UserModes = modes.ToArray()
             });
             password = null;
@@ -209,14 +178,6 @@ namespace BIRC.ViewModels
 
         #region COMMAND
 
-        public ICommand CreateGroup
-        {
-            get
-            {
-                return createGroup;
-            }
-        }
-
         public ICommand AddConnection
         {
             get
@@ -269,29 +230,6 @@ namespace BIRC.ViewModels
                 saveAsNewCmd.RaiseCanExecuteChanged();
                 removeCmd.RaiseCanExecuteChanged();
                 addConnection.RaiseCanExecuteChanged();
-            }
-        }
-
-        public IEnumerable<string> GroupList {
-            get
-            {
-                List<Connection> list = ConnectionFile.Instance().Connections;
-                if (list != null)
-                {
-                    groupList.AddRange(list.DistinctBy(p => p.Group).Select(p => p.Group).Where(p => p != Connection.DEFAULT_GROUP));
-                }
-                return groupList;
-            }
-        }
-
-        public string GroupSelected {
-            get
-            {
-                return groupSelected;
-            }
-            set
-            {
-                groupSelected = value;
             }
         }
 
@@ -354,19 +292,6 @@ namespace BIRC.ViewModels
             set
             {
                 txtComment = value;
-            }
-        }
-
-        public string NewGroup
-        {
-            get
-            {
-                return newgroup;
-            }
-            set
-            {
-                newgroup = value;
-                createGroup.RaiseCanExecuteChanged();
             }
         }
 

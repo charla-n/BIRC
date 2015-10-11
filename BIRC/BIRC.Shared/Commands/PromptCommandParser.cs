@@ -100,11 +100,8 @@ namespace BIRC.Shared.Commands
             Connection newc = new Connection()
             {
                 AutoConnect = true,
-                Server = new Models.Server()
-                {
-                    Name = list[1],
-                    Port = port,
-                },
+                Name = list[1],
+                Port = port,
                 Password = pwd
             };
             AHistory cur = ConnectionUtils.Add(newc);

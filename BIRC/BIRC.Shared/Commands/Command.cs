@@ -111,12 +111,12 @@ namespace BIRC.Shared.Commands
             client.WhoWasReplyReceived += Client_WhoWasReplyReceived;
 
             connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("TryToConnect"),
-                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port)));
+                connection.Name, connection.Port == null ? IrcClient.DefaultPort : (int)connection.Port)));
             if (string.IsNullOrWhiteSpace(connection.Nickname))
                 connection.Nickname = App.APPNAME + new Random().Next(int.MinValue, int.MaxValue);
             if (string.IsNullOrWhiteSpace(connection.RealName))
                 connection.RealName = connection.Nickname;
-            client.Connect(connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port,
+            client.Connect(connection.Name, connection.Port == null ? IrcClient.DefaultPort : (int)connection.Port,
                 false, new IrcUserRegistrationInfo()
                 {
                     NickName = connection.Nickname,
@@ -212,7 +212,7 @@ namespace BIRC.Shared.Commands
         {
             connection.Connected = false;
             connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("Disconnected"),
-                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port)));
+                connection.Name, connection.Port == null ? IrcClient.DefaultPort : (int)connection.Port)));
             Unregister();
         }
 
@@ -226,7 +226,7 @@ namespace BIRC.Shared.Commands
         {
             connection.Connected = true;
             connection.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("Connected"),
-                connection.Server.Name, connection.Server.Port == null ? IrcClient.DefaultPort : (int)connection.Server.Port)));
+                connection.Name, connection.Port == null ? IrcClient.DefaultPort : (int)connection.Port)));
         }
 
         private void Client_ChannelListReceived(object sender, IrcChannelListReceivedEventArgs e)
@@ -275,7 +275,7 @@ namespace BIRC.Shared.Commands
             e.Channel.UserKicked -= Channel_UserKicked;
             e.Channel.UserLeft -= Channel_UserLeft;
 
-            connection.Channels.RemoveAll(p => p.Name == e.Channel.Name);
+            connection.Channels.Remove(connection.Channels.FirstOrDefault(p => p.Name == e.Channel.Name));
         }
 
         private void LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
@@ -289,12 +289,14 @@ namespace BIRC.Shared.Commands
             e.Channel.UserKicked += Channel_UserKicked;
             e.Channel.UserLeft += Channel_UserLeft;
 
-            connection.AddChannel(new Channel()
+            Channel channel = new Channel()
             {
-                Name = e.Channel.Name,
-                ParentConnection = connection,
-                Command = connection.Command,
-            });
+                Name = "   " + e.Channel.Name,
+                RealName = e.Channel.Name,
+                ParentConnection = connection
+            };
+            ConnectionUtils.AddChannel(channel);
+            connection.AddChannel(channel);
         }
 
         private void Channel_UserLeft(object sender, IrcChannelUserEventArgs e)

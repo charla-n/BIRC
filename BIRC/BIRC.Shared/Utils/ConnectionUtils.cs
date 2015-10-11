@@ -4,33 +4,35 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace BIRC.Shared.Utils
 {
     public static class ConnectionUtils
     {
-        public static Connection ConnectionFromAHistory(AHistory obj)
-        {
-            Connection co = null;
-
-            if (obj is Connection)
-                co = obj as Connection;
-            else
-                co = ((Channel)obj).ParentConnection;
-
-            return co;
-        }
-
         public static Connection Add(Connection c)
         {
-            Connection get = ConnectionFile.Instance().Connections.FirstOrDefault(
-                p => p.Server.Name == c.Server.Name);
+            Connection get = (Connection)ConnectionFile.Instance().Connections.FirstOrDefault(
+                p => p is Connection && ((Connection)p).Name == c.Name);
             if (get != null)
                 return get;
             ConnectionFile.Instance().Connections.Add(c);
-            MainPage.currentDataContext.Changed("ByServers");
-            ConnectionFile.Instance().WriteImpl(ConnectionFile.Instance().Connections);
+            ConnectionFile.Instance().WriteImpl(ConnectionFile.Instance().Connections.Where(p => p is Connection).Cast<Connection>().ToList());
             return c;
+        }
+
+        public static void AddChannel(Channel channel)
+        {
+            if (ConnectionFile.Instance().Connections.FirstOrDefault(p => (p is Channel && ((Channel)p).Name == channel.Name)
+            && (p is Connection && channel.ParentConnection.Name == ((Connection)p).Name)) == null)
+            {
+                MainPage.RunActionOnUiThread(() =>
+                {
+                    ObservableCollection<AHistory> col = ConnectionFile.Instance().Connections;
+
+                    col.Insert(col.IndexOf(channel.ParentConnection) + 1, channel);
+                });
+            }
         }
     }
 }
