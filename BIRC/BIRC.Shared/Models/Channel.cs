@@ -5,26 +5,15 @@ using System.Text;
 
 namespace BIRC.Shared.Models
 {
-    public class Channel
+    public class Channel : AHistory
     {
+        public Channel()
+        {
+            history = string.Empty;
+        }
+
         public string Name { get; set; }
         [JsonIgnore]
-        private string history;
-        [JsonIgnore]
-        public string History
-        {
-            get
-            {
-                return history;
-            }
-            set
-            {
-                history = value;
-                MainPage.RunActionOnUiThread(() =>
-                {
-                    MainPage.currentDataContext.Changed("WebViewContent");
-                });
-            }
-        }
+        public Connection ParentConnection { get; set; }
     }
 }

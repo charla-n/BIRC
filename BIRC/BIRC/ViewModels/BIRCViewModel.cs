@@ -2,6 +2,7 @@
 using BIRC.Shared.Exceptions;
 using BIRC.Shared.Files;
 using BIRC.Shared.Models;
+using BIRC.Shared.Utils;
 using BIRC.Views;
 using System;
 using System.Collections.Generic;
@@ -22,12 +23,14 @@ namespace BIRC.ViewModels
         private Connection defaultConnection;
         private string commandTxt;
         private object serverSelection;
+        private AHistory channelSelection;
         private RelayCommand AddConnectionCmd;
         private RelayCommand ConnectionCmd;
         private RelayCommand CommandCmd;
 
         public BIRCViewModel()
         {
+            channelSelection = null;
             commandTxt = string.Empty;
             defaultConnection = new Connection() { IsDefault = true };
             RetrieveList();
@@ -42,20 +45,20 @@ namespace BIRC.ViewModels
             OnPropertyChanged("ByServers");
         }
 
-        public Connection GetSelectedConnection()
+        public AHistory GetSelectedConnection()
         {
             if (serverSelection == null)
                 return defaultConnection;
             if (serverSelection is Connection)
                 return (Connection)serverSelection;
-            return (Connection)((RelativePanel)serverSelection).DataContext;
+            return (Connection)((TextBlock)serverSelection).DataContext;
         }
 
         public void CommandAction()
         {
             try
             {
-                Connection c = GetSelectedConnection();
+                AHistory c = GetSelectedConnection();
                 string[] splitted = commandTxt.Split(PromptCommandParser.SEPARATORS);
                 PromptCommandParser.Parse(splitted[0], c, splitted.ToList());
             }
@@ -69,29 +72,24 @@ namespace BIRC.ViewModels
 
         private void ConnectionAction()
         {
-            if (GetSelectedConnection().Command.IsConnected())
-                GetSelectedConnection().Command.Disconnect();
-            else
-                GetSelectedConnection().Command.Connect();
-        }
+            Connection co = ConnectionUtils.ConnectionFromAHistory(GetSelectedConnection());
 
-        //public string WebViewContent
-        //{
-        //    get
-        //    {
-        //        if (GetSelectedConnection() == null)
-        //            return defaultConnection.History;
-        //        return GetSelectedConnection().History;
-        //    }
-        //}
+            if (co.Command.IsConnected())
+                co.Command.Disconnect();
+            else
+                co.Command.Connect();
+        }
 
         public string ConnectTxt
         {
             get
             {
+                Connection co = null;
+
                 if (GetSelectedConnection() == null)
                     return "Connect";
-                if (GetSelectedConnection().Connected)
+                co = ConnectionUtils.ConnectionFromAHistory(GetSelectedConnection());
+                if (co.Connected)
                     return "Disconnect";
                 else
                     return "Connect";
@@ -121,6 +119,14 @@ namespace BIRC.ViewModels
                         Group = x.Key,
                         Items = x.ToList()
                     });
+            }
+        }
+
+        public AHistory ChannelSelection
+        {
+            get
+            {
+                return channelSelection;
             }
         }
 
@@ -165,7 +171,7 @@ namespace BIRC.ViewModels
         {
             var frame = (Frame)Window.Current.Content;
 
-            frame.Navigate(typeof(AddServerPage));
+            frame.Navigate(typeof(AddServerPage), GetSelectedConnection());
         }
 
         public override void Refresh()

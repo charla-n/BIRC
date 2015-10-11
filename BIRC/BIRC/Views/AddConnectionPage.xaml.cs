@@ -27,6 +27,13 @@ namespace BIRC.Views
         {
             this.InitializeComponent();
             this.Loaded += AddServerPage_Loaded;
+            this.Unloaded += AddServerPage_Unloaded;
+        }
+
+        private void AddServerPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= AddServerPage_Loaded;
+            this.Unloaded -= AddServerPage_Unloaded;
         }
 
         private void AddServerPage_Loaded(object sender, RoutedEventArgs e)

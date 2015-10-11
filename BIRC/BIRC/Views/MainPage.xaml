@@ -5,8 +5,6 @@
     xmlns:local="using:BIRC.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ext="using:BIRC.Utils"
-    xmlns:common="using:WinRT_RichTextBlock.Html2Xaml"
     mc:Ignorable="d" DataContext="{StaticResource BIRCViewModelDataContext}">
 
     <Page.Resources>
@@ -55,7 +53,8 @@
                     </Grid.RowDefinitions>
                     <ListView x:Name="serverListView" Grid.Row="1"
                           ItemsSource="{Binding Source={StaticResource CollectionViewSourceServersKey}}"
-                          IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}">
+                          IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}"
+                          >
                         <ListView.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>
@@ -65,14 +64,28 @@
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
                         </ListView.GroupStyle>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <RelativePanel
-                                        x:Name="serverStackPanel" FlyoutBase.AttachedFlyout="{StaticResource ServerFlyout}"
-                                    RightTapped="serverStackPanel_RightTapped">
-                                    <TextBlock x:Name="ServerNameTxt" Text="{Binding Server.Name}"></TextBlock>
-                                    <ListView x:Name="Channels">
-                                        
+                                        x:Name="serverStackPanel">
+                                    <TextBlock x:Name="ServerNameTxt" Text="{Binding Server.Name}"
+                                               FlyoutBase.AttachedFlyout="{StaticResource ServerFlyout}" Margin="0,0,5,0"
+                                               RightTapped="serverStackPanel_RightTapped"></TextBlock>
+                                    <ListView x:Name="Channels" RelativePanel.Below="ServerNameTxt"
+                                              ItemsSource="{Binding Channels, Mode=TwoWay}" SelectedItem="{Binding ChannelSelection, Mode=TwoWay}"
+                                              RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                                              >
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"></TextBlock>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
                                     </ListView>
                                 </RelativePanel>
                             </DataTemplate>
@@ -103,7 +116,7 @@
                              RelativePanel.AlignRightWithPanel="True"
                              RelativePanel.AlignTopWithPanel="True"
                              RelativePanel.AlignBottomWithPanel="True"
-                             Margin="0,0,0,36">
+                             Margin="0,0,0,36" GotFocus="WebView_GotFocus" LostFocus="WebView_LostFocus">
                     </WebView>
                     <Grid Height="32" x:Name="GridCommand" 
                           RelativePanel.AlignLeftWithPanel="True" 

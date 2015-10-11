@@ -32,10 +32,21 @@ namespace BIRC
         private static ResourceLoader infoloader;
         private static ResourceLoader errorloader;
 
+        private bool WebViewHasFocus;
+
         public MainPage()
         {
             this.InitializeComponent();
             Loaded += MainPage_Loaded;
+            WebViewHasFocus = false;
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory -= MainPage_OnAddHistory;
+            ((BIRCViewModel)currentDataContext).OnBeforeServerSelectionChanged -= CurrentDataContext_OnBeforeServerSelectionChanged;
+            ((BIRCViewModel)currentDataContext).OnAfterServerSelectionChanged -= CurrentDataContext_OnAfterServerSelectionChanged;
+            Loaded -= MainPage_Loaded;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -132,6 +143,16 @@ namespace BIRC
                 e.Handled = true;
                 vm.CommandTxt = vm.GetSelectedConnection().CommandHistory.DownHistory();
             }
+        }
+
+        private void WebView_GotFocus(object sender, RoutedEventArgs e)
+        {
+            WebViewHasFocus = true;
+        }
+
+        private void WebView_LostFocus(object sender, RoutedEventArgs e)
+        {
+            WebViewHasFocus = false;
         }
     }
 }

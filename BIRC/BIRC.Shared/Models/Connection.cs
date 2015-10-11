@@ -10,22 +10,53 @@ using Windows.UI.Core;
 
 namespace BIRC.Shared.Models
 {
-//    <script>
-//    window.setInterval(function()
-//    {
-//        var x = document.getElementsByClassName('bottom');
-//        x[x.length - 1].scrollIntoView();
-//    }, 100);
-//</script>
-
-    public class Connection : INotifyPropertyChanged
+    public abstract class AHistory : INotifyPropertyChanged
     {
         public event Action<string> OnAddHistory;
 
+        public AHistory()
+        {
+            CommandHistory = new HistoryList();
+        }
+
+        [JsonIgnore]
+        public Command Command { get; set; }
+        [JsonIgnore]
+        protected string history;
+        [JsonIgnore]
+        public HistoryList CommandHistory { get; set; }
+        [JsonIgnore]
+        public string History
+        {
+            get
+            {
+                return history;
+            }
+        }
+
+        public void AddHistory(string historyToAdd)
+        {
+            history += historyToAdd;
+            OnAddHistory?.Invoke(historyToAdd);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+
+    public class Connection : AHistory
+    {
         public Connection()
         {
             Command = new Command();
-            CommandHistory = new HistoryList();
+            Channels = new List<Channel>();
             Command.Connection = this;
             Group = DEFAULT_GROUP;
             history = string.Empty;
@@ -46,19 +77,6 @@ namespace BIRC.Shared.Models
         [JsonIgnore]
         public List<Channel> Channels { get; set; }
         [JsonIgnore]
-        public HistoryList CommandHistory { get; set; }
-        [JsonIgnore]
-        public Command Command { get; set; }
-        [JsonIgnore]
-        private string history;
-        [JsonIgnore]
-        public string History {
-            get
-            {
-                return history;
-            }
-        }
-        [JsonIgnore]
         private bool connected;
         [JsonIgnore]
         public bool Connected {
@@ -78,20 +96,13 @@ namespace BIRC.Shared.Models
         [JsonIgnore]
         public bool IsDefault { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
+        public void AddChannel(Channel channel)
         {
-            if (PropertyChanged != null)
+            Channels.Add(channel);
+            MainPage.RunActionOnUiThread(() =>
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public void AddHistory(string historyToAdd)
-        {
-            history += historyToAdd;
-            OnAddHistory?.Invoke(historyToAdd);
+                MainPage.currentDataContext.Changed("ByServers");
+            });
         }
     }
 }

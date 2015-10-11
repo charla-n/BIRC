@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Windows.ApplicationModel.Resources;
+using System.Linq;
 
 namespace BIRC.Shared.Commands
 {
@@ -265,9 +266,66 @@ namespace BIRC.Shared.Commands
 
         private void LocalUser_LeftChannel(object sender, IrcChannelEventArgs e)
         {
+            e.Channel.MessageReceived -= Channel_MessageReceived;
+            e.Channel.ModesChanged -= Channel_ModesChanged;
+            e.Channel.NoticeReceived -= Channel_NoticeReceived;
+            e.Channel.TopicChanged -= Channel_TopicChanged;
+            e.Channel.UserInvited -= Channel_UserInvited;
+            e.Channel.UserJoined -= Channel_UserJoined;
+            e.Channel.UserKicked -= Channel_UserKicked;
+            e.Channel.UserLeft -= Channel_UserLeft;
+
+            connection.Channels.RemoveAll(p => p.Name == e.Channel.Name);
         }
 
         private void LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
+        {
+            e.Channel.MessageReceived += Channel_MessageReceived;
+            e.Channel.ModesChanged += Channel_ModesChanged;
+            e.Channel.NoticeReceived += Channel_NoticeReceived;
+            e.Channel.TopicChanged += Channel_TopicChanged;
+            e.Channel.UserInvited += Channel_UserInvited;
+            e.Channel.UserJoined += Channel_UserJoined;
+            e.Channel.UserKicked += Channel_UserKicked;
+            e.Channel.UserLeft += Channel_UserLeft;
+
+            connection.AddChannel(new Channel()
+            {
+                Name = e.Channel.Name,
+                ParentConnection = connection,
+                Command = connection.Command,
+            });
+        }
+
+        private void Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
+        {
+        }
+
+        private void Channel_UserKicked(object sender, IrcChannelUserEventArgs e)
+        {
+        }
+
+        private void Channel_UserJoined(object sender, IrcChannelUserEventArgs e)
+        {
+        }
+
+        private void Channel_UserInvited(object sender, IrcUserEventArgs e)
+        {
+        }
+
+        private void Channel_TopicChanged(object sender, IrcUserEventArgs e)
+        {
+        }
+
+        private void Channel_NoticeReceived(object sender, IrcMessageEventArgs e)
+        {
+        }
+
+        private void Channel_ModesChanged(object sender, IrcUserEventArgs e)
+        {
+        }
+
+        private void Channel_MessageReceived(object sender, IrcMessageEventArgs e)
         {
         }
 

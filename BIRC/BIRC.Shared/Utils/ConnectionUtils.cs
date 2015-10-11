@@ -9,6 +9,18 @@ namespace BIRC.Shared.Utils
 {
     public static class ConnectionUtils
     {
+        public static Connection ConnectionFromAHistory(AHistory obj)
+        {
+            Connection co = null;
+
+            if (obj is Connection)
+                co = obj as Connection;
+            else
+                co = ((Channel)obj).ParentConnection;
+
+            return co;
+        }
+
         public static Connection Add(Connection c)
         {
             Connection get = ConnectionFile.Instance().Connections.FirstOrDefault(

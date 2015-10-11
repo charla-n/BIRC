@@ -15,8 +15,8 @@ namespace BIRC.Shared.Commands
     {
         public static char[] SEPARATORS = { ' ' };
         public static char[] COMMA_SEPARATORS = { ',' };
-        private static Dictionary<string, Action<IList<string>, Connection>> Commands =
-            new Dictionary<string, Action<IList<string>, Connection>>()
+        private static Dictionary<string, Action<IList<string>, AHistory>> Commands =
+            new Dictionary<string, Action<IList<string>, AHistory>>()
         {
                 { "/server", Server },
                 { "/list", ListChan },
@@ -26,16 +26,14 @@ namespace BIRC.Shared.Commands
                 { "/join", Join },
         };
 
-        public static void Parse(string cmd, Connection c, List<string> p)
+        public static void Parse(string cmd, AHistory c, List<string> p)
         {
-            if (cmd != "/server" && cmd != "/help" && (c.IsDefault || !c.Connected))
-                return;
             if (!Commands.ContainsKey(cmd))
                 throw new ErrorBIRC(string.Format(MainPage.GetErrorString("UnknownCommand"), cmd));
             Commands[cmd].Invoke(p, c);
         }
 
-        private static void Join(IList<string> list, Connection c)
+        private static void Join(IList<string> list, AHistory c)
         {
             if (list.Count == 1)
                 throw new ErrorBIRC(MainPage.GetErrorString("JoinNoParam"));
@@ -53,12 +51,12 @@ namespace BIRC.Shared.Commands
             }
         }
 
-        private static void Info(IList<string> list, Connection c)
+        private static void Info(IList<string> list, AHistory c)
         {
             c.Command.Info();
         }
 
-        private static void Help(IList<string> list, Connection c)
+        private static void Help(IList<string> list, AHistory c)
         {
             if (list.Count == 1)
                 c.Command.WriteToHistory(MainPage.GetInfoString("Help"));
@@ -66,7 +64,7 @@ namespace BIRC.Shared.Commands
                 c.Command.WriteToHistory(MainPage.GetInfoString("Help" + list[1]));
         }
 
-        private static void Away(IList<string> list, Connection c)
+        private static void Away(IList<string> list, AHistory c)
         {
             if (!c.Command.LocalUser.IsAway && list.Count == 1)
                 throw new ErrorBIRC(MainPage.GetErrorString("AwayNotEnoughArg"));
@@ -76,14 +74,14 @@ namespace BIRC.Shared.Commands
                 c.Command.Away();
         }
 
-        private static void ListChan(IList<string> list, Connection c)
+        private static void ListChan(IList<string> list, AHistory c)
         {
             IEnumerable<string> channels = list.Skip(1);
 
             c.Command.ListChannel(channels.Count() == 0 ? null : channels);
         }
 
-        private async static void Server(IList<string> list, Connection c)
+        private async static void Server(IList<string> list, AHistory c)
         {
             string pwd = null;
             int port = 0;
@@ -109,7 +107,7 @@ namespace BIRC.Shared.Commands
                 },
                 Password = pwd
             };
-            Connection cur = ConnectionUtils.Add(newc);
+            AHistory cur = ConnectionUtils.Add(newc);
             ((BIRCViewModel)MainPage.currentDataContext).ServerSelection = cur;
             if (!cur.Command.IsConnected())
                 cur.Command.Connect();
