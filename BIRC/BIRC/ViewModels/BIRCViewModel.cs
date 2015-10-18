@@ -4,6 +4,7 @@ using BIRC.Shared.Files;
 using BIRC.Shared.Models;
 using BIRC.Shared.Utils;
 using BIRC.Views;
+using IrcDotNet;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -121,6 +122,18 @@ namespace BIRC.ViewModels
             }
         }
 
+        public IEnumerable<string> UserList
+        {
+            get
+            {
+                Channel channel = GetSelectedConnection() as Channel;
+
+                if (channel != null)
+                    return channel.Users;
+                return new List<string>();
+            }
+        }
+
         public ICommand CommandBtn
         {
             get
@@ -155,6 +168,7 @@ namespace BIRC.ViewModels
                 serverSelection = value;
                 OnAfterServerSelectionChanged?.Invoke();
                 OnPropertyChanged("ServerSelection");
+                OnPropertyChanged("UserList");
             }
         }
 

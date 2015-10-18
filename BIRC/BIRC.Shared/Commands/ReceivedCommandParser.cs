@@ -37,7 +37,8 @@ namespace BIRC.Shared.Commands
             { "JOIN", Ignore },
             { "353", Ignore },
             { "366", Ignore },
-            { "PRIVMSG", Ignore }
+            { "PRIVMSG", Ignore },
+            { "QUIT", Ignore }
         };
 
         public static string Parse(string cmd, string[] param, Connection c)

@@ -5,12 +5,14 @@
     xmlns:local="using:BIRC.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cvt="using:BIRC.Utils"
     mc:Ignorable="d" DataContext="{StaticResource BIRCViewModelDataContext}">
 
     <Page.Resources>
         <MenuFlyout x:Key="ServerFlyout">
             <MenuFlyoutItem Text="{Binding ConnectTxt, Mode=TwoWay}" Command="{Binding Connect}" DataContext="{StaticResource BIRCViewModelDataContext}"></MenuFlyoutItem>
         </MenuFlyout>
+        <cvt:BooleanToVisibilityConverter x:Key="BtoVConverter"></cvt:BooleanToVisibilityConverter>
     </Page.Resources>
 
     <Grid Margin="0,0,5,0">
@@ -48,21 +50,43 @@
                         <RowDefinition Height="42"/>
                         <RowDefinition Height="42"/>
                     </Grid.RowDefinitions>
-                    <ListView x:Name="serverListView" Grid.Row="1"
-                          ItemsSource="{Binding ByServers}"
-                          IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}"
-                          >
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <RelativePanel
-                                        x:Name="serverStackPanel">
-                                    <TextBlock x:Name="ServerNameTxt" Text="{Binding Name}"
-                                               FlyoutBase.AttachedFlyout="{StaticResource ServerFlyout}" Margin="0,0,5,0"
-                                               RightTapped="serverStackPanel_RightTapped"></TextBlock>
-                                </RelativePanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <RelativePanel Grid.Row="1">
+                        <TextBlock x:Name="ConnectionsTitleTxt" Style="{ThemeResource TitleTextBlockStyle}"
+                                   Margin="0,0,2,0">Connections</TextBlock>
+                        <ListView x:Name="serverListView"
+                                  ItemsSource="{Binding ByServers}"
+                                  IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}"
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignRightWithPanel="True"
+                                  RelativePanel.Below="ConnectionsTitleTxt">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <RelativePanel
+                                            x:Name="serverStackPanel">
+                                        <TextBlock x:Name="ServerNameTxt" Text="{Binding Name}"
+                                                   FlyoutBase.AttachedFlyout="{StaticResource ServerFlyout}" Margin="0,0,5,0"
+                                                   RightTapped="serverStackPanel_RightTapped"></TextBlock>
+                                    </RelativePanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBlock x:Name="UserTitleTxt" Style="{ThemeResource TitleTextBlockStyle}"
+                                   RelativePanel.Below="serverListView" Margin="0,10,2,0" 
+                                   >Users</TextBlock>
+                        <ListView x:Name="UsersListView" RelativePanel.Below="UserTitleTxt"
+                                  ItemsSource="{Binding UserList}"
+                                  IsSynchronizedWithCurrentItem="False"
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignRightWithPanel="True">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock x:Name="UserNameTxt" Text="{Binding}"
+                                                   Margin="0,0,5,0"
+                                                   ></TextBlock>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </RelativePanel>
                     <Button Style="{ThemeResource TextBlockButtonStyle}" 
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2"
                     Command="{Binding AddConnection}">

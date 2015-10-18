@@ -37,7 +37,7 @@ namespace BIRC.Shared.Utils
         public static string WriteBodyWithSource(string body, string src, bool self)
         {
             return "<td style=\"" + BODY_STYLE + "\">&lt;<span style=\"" 
-                + (self == true ? SOURCE_STYLE_SELF : SOURCE_STYLE) + "\">" + src + "&nbsp;</span>&gt;"
+                + (self == true ? SOURCE_STYLE_SELF : SOURCE_STYLE) + "\">" + src + "</span>&gt;&nbsp;"
                 + body + "</td>";
         }
 
