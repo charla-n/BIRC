@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Collections.ObjectModel;
+using BIRC.ViewModels;
 
 namespace BIRC.Shared.Utils
 {
@@ -31,6 +32,7 @@ namespace BIRC.Shared.Utils
                     ObservableCollection<AHistory> col = ConnectionFile.Instance().Connections;
 
                     col.Insert(col.IndexOf(channel.ParentConnection) + 1, channel);
+                    ((BIRCViewModel)MainPage.currentDataContext).ServerSelection = channel;
                 });
             }
         }

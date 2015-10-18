@@ -87,6 +87,11 @@ namespace BIRC.Shared.Commands
             client.Channels.Join(channels);
         }
 
+        public void SendMessage(string target, string msg)
+        {
+            client.LocalUser.SendMessage(target, msg);
+        }
+
         public async void Connect()
         {
             client = new StandardIrcClient();
@@ -258,6 +263,12 @@ namespace BIRC.Shared.Commands
 
         private void LocalUser_MessageSent(object sender, IrcMessageEventArgs e)
         {
+            Channel curChannel = connection.Channels.FirstOrDefault(p => p.RealName == e.Targets[0].Name);
+
+            if (curChannel != null)
+            {
+                curChannel.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, true));
+            }
         }
 
         private void LocalUser_MessageReceived(object sender, IrcMessageEventArgs e)
@@ -329,6 +340,15 @@ namespace BIRC.Shared.Commands
 
         private void Channel_MessageReceived(object sender, IrcMessageEventArgs e)
         {
+            foreach (IIrcMessageTarget target in e.Targets)
+            {
+                Channel curChannel = connection.Channels.FirstOrDefault(p => p.RealName == target.Name);
+
+                if (curChannel != null)
+                {
+                    curChannel.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
+                }
+            }
         }
 
         private void LocalUser_InviteReceived(object sender, IrcChannelInvitationEventArgs e)

@@ -57,8 +57,14 @@ namespace BIRC.ViewModels
             try
             {
                 AHistory c = GetSelectedConnection();
-                string[] splitted = commandTxt.Split(PromptCommandParser.SEPARATORS);
-                PromptCommandParser.Parse(splitted[0], c, splitted.ToList());
+                commandTxt = commandTxt.Trim();
+                if (commandTxt.StartsWith("/"))
+                {
+                    string[] splitted = commandTxt.Split(PromptCommandParser.SEPARATORS);
+                    PromptCommandParser.Parse(splitted[0], c, splitted.ToList());
+                }
+                else
+                    PromptCommandParser.Parse(commandTxt, c, null);
             }
             catch (ErrorBIRC e)
             {

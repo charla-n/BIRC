@@ -39,7 +39,7 @@ namespace BIRC.Shared.Files
             List<Connection> co;
             
             co = await Read();
-            if (connections == null)
+            if (co == null)
                 connections = new ObservableCollection<AHistory>();
             else
                 connections = new ObservableCollection<AHistory>(co);

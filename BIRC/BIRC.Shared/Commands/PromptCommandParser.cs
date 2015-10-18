@@ -28,9 +28,22 @@ namespace BIRC.Shared.Commands
 
         public static void Parse(string cmd, AHistory c, List<string> p)
         {
-            if (!Commands.ContainsKey(cmd))
+            if (cmd.StartsWith("/") && !Commands.ContainsKey(cmd))
                 throw new ErrorBIRC(string.Format(MainPage.GetErrorString("UnknownCommand"), cmd));
-            Commands[cmd].Invoke(p, c);
+            else if (!cmd.StartsWith("/"))
+                Message(cmd, c);
+            else
+                Commands[cmd].Invoke(p, c);
+        }
+
+        private static void Message(string msg, AHistory c)
+        {
+            Channel channel = c as Channel;
+
+            if (channel != null)
+            {
+                channel.ParentConnection.Command.SendMessage(channel.RealName, msg);
+            }
         }
 
         private static void Join(IList<string> list, AHistory c)
