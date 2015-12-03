@@ -39,21 +39,7 @@
             <TextBox x:Name="RealNameTxtBox" RelativePanel.Below="RealNameTxt"
                      RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
                      Text="{Binding Realname, Mode=TwoWay}"></TextBox>
-            <TextBlock x:Name="GroupTxt" RelativePanel.Below="RealNameTxtBox"
-                       Style="{ThemeResource BaseTextBlockStyle}"
-                       Margin="{StaticResource FormThickness}">Choose group</TextBlock>
-            <ComboBox x:Name="GroupComboBox" RelativePanel.Below="GroupTxt"
-                      RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
-                      ItemsSource="{Binding GroupList, Mode=TwoWay}" SelectedItem="{Binding GroupSelected, Mode=TwoWay}"></ComboBox>
-            <TextBlock x:Name="CreateGroupTxt" RelativePanel.Below="GroupComboBox"
-                       Style="{ThemeResource BaseTextBlockStyle}"
-                       Margin="{StaticResource FormThickness}">Create group</TextBlock>
-            <TextBox x:Name="CreateGroupTxtBox" RelativePanel.Below="CreateGroupTxt"
-                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Margin="0,0,69,0"
-                     Text="{Binding NewGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-            <Button x:Name="CreateGroupBtn" RelativePanel.Below="CreateGroupTxt"
-                    RelativePanel.AlignRightWith="CreateGroupTxtBox" Command="{Binding CreateGroup}">Create</Button>
-            <TextBlock x:Name="UserModeTxt" RelativePanel.Below="CreateGroupTxtBox"
+            <TextBlock x:Name="UserModeTxt" RelativePanel.Below="RealNameTxtBox"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Margin="{StaticResource FormThickness}">User modes</TextBlock>
             <CheckBox x:Name="InvisibleUserMode" RelativePanel.Below="UserModeTxt" IsChecked="{Binding IsInvisible, Mode=TwoWay}">Invisible (+i)</CheckBox>

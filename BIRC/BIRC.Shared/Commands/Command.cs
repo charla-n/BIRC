@@ -92,6 +92,11 @@ namespace BIRC.Shared.Commands
             client.LocalUser.SendMessage(target, msg);
         }
 
+        public void Part(IEnumerable<string> channels)
+        {
+            client.Channels.Leave(channels);
+        }
+
         public async void Connect()
         {
             client = new StandardIrcClient();
@@ -285,8 +290,19 @@ namespace BIRC.Shared.Commands
             e.Channel.UserJoined -= Channel_UserJoined;
             e.Channel.UserKicked -= Channel_UserKicked;
             e.Channel.UserLeft -= Channel_UserLeft;
+            e.Channel.UsersListReceived -= Channel_UsersListReceived;
+            foreach (IrcChannelUser user in e.Channel.Users)
+            {
+                user.User.Quit -= User_Quit;
+                user.User.NickNameChanged -= User_NickNameChanged;
+                user.User.IsAwayChanged -= User_IsAwayChanged;
+                user.User.InviteReceived -= User_InviteReceived;
+                user.ModesChanged -= User_ModesChanged;
+            }
 
-            connection.Channels.Remove(connection.Channels.FirstOrDefault(p => p.Name == e.Channel.Name));
+            Channel toRemove = connection.Channels.FirstOrDefault(p => p.RealName == e.Channel.Name);
+            connection.Channels.Remove(toRemove);
+            ConnectionUtils.RemoveChannel(toRemove);
         }
 
         private void LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
@@ -305,7 +321,8 @@ namespace BIRC.Shared.Commands
             {
                 Name = "   " + e.Channel.Name,
                 RealName = e.Channel.Name,
-                ParentConnection = connection
+                ParentConnection = connection,
+                Command = connection.Command
             };
             ConnectionUtils.AddChannel(channel);
             connection.AddChannel(channel);
@@ -317,7 +334,13 @@ namespace BIRC.Shared.Commands
             Channel mychannel = connection.Channels.FirstOrDefault(p => p.RealName == channel.Name);
 
             if (mychannel != null)
-                mychannel.Users = new System.Collections.ObjectModel.ObservableCollection<string>(channel.Users.Select(p => p.User.NickName).ToList());
+                mychannel.Users = new System.Collections.ObjectModel.ObservableCollection<Channel>(channel.Users.Select(p => new Channel()
+                {
+                    Name = p.User.NickName,
+                    Users = null,
+                    Command = connection.Command,
+                    ParentConnection = connection
+                }));
             foreach (IrcChannelUser user in channel.Users)
             {
                 user.User.Quit += User_Quit;
@@ -344,16 +367,15 @@ namespace BIRC.Shared.Commands
         {
         }
 
-        private void User_Quit(object sender, IrcCommentEventArgs e)
+        private void GUserLeft(IrcUser user, string comment)
         {
-            IrcUser user = (IrcUser)sender;
-
             foreach (Channel mychannel in connection.Channels)
             {
-                if (mychannel.Users.Contains(user.NickName))
+                Channel toRemove = mychannel.Users.FirstOrDefault(p => p.Name == user.NickName);
+                if (toRemove != null)
                 {
-                    mychannel.RemoveUser(user.NickName);
-                    mychannel.AddHistory(HtmlWriter.WriteFrom(e.Comment, user.NickName, false));
+                    mychannel.RemoveUser(toRemove);
+                    mychannel.AddHistory(HtmlWriter.WriteFrom(comment, user.NickName, false));
                 }
             }
 
@@ -363,8 +385,15 @@ namespace BIRC.Shared.Commands
             user.InviteReceived -= User_InviteReceived;
         }
 
+        private void User_Quit(object sender, IrcCommentEventArgs e)
+        {
+            
+            GUserLeft((IrcUser)sender, e.Comment);
+        }
+
         private void Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
         {
+            GUserLeft(e.ChannelUser.User, e.Comment);
         }
 
         private void Channel_UserKicked(object sender, IrcChannelUserEventArgs e)
@@ -380,7 +409,13 @@ namespace BIRC.Shared.Commands
             e.ChannelUser.User.IsAwayChanged += User_IsAwayChanged;
             e.ChannelUser.User.InviteReceived += User_InviteReceived;
 
-            mychannel.AddUser(e.ChannelUser.User.NickName);
+            mychannel.AddUser(new Channel()
+            {
+                Users = null,
+                ParentConnection = connection,
+                Name = e.ChannelUser.User.NickName,
+                Command = connection.Command
+            });
             mychannel.AddHistory(HtmlWriter.WriteFrom("has joined", e.ChannelUser.User.NickName, false));
         }
 

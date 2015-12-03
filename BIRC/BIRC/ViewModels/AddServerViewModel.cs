@@ -46,6 +46,7 @@ namespace BIRC.ViewModels
             addConnection = new RelayCommand(AddConnectionAction, CanAddConnection);
             txtSearch = string.Empty;
             list = new ListCollectionView();
+            list.Source = new List<Server>();
             list.Filter = p =>
             {
                 if (!((Server)p).Name.Contains(txtSearch))
@@ -67,8 +68,11 @@ namespace BIRC.ViewModels
                 List<Server> res = p.Result;
                 MainPage.RunActionOnUiThread(() =>
                 {
-                    list.Source = res;
-                    OnPropertyChanged("List");
+                    if (res != null)
+                    {
+                        list.Source = res;
+                        OnPropertyChanged("List");
+                    }
                 });
             });
         }

@@ -24,6 +24,7 @@ namespace BIRC.Shared.Commands
                 { "/help", Help },
                 { "/info", Info },
                 { "/join", Join },
+                { "/part", Part }
         };
 
         public static void Parse(string cmd, AHistory c, List<string> p)
@@ -44,6 +45,14 @@ namespace BIRC.Shared.Commands
             {
                 channel.ParentConnection.Command.SendMessage(channel.RealName, msg);
             }
+        }
+
+        private static void Part(IList<string> list, AHistory c)
+        {
+            if (list.Count == 1)
+                throw new ErrorBIRC(MainPage.GetErrorString("PartNoParam"));
+            if (list.Count == 2)
+                c.Command.Part(list[1].Split(COMMA_SEPARATORS));
         }
 
         private static void Join(IList<string> list, AHistory c)

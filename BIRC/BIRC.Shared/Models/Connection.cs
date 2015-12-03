@@ -18,6 +18,7 @@ namespace BIRC.Shared.Models
 
         public AHistory()
         {
+            IsActive = false;
             CommandHistory = new HistoryList();
         }
 
@@ -37,10 +38,14 @@ namespace BIRC.Shared.Models
             }
         }
 
+        [JsonIgnore]
+        public bool IsActive { get; set; }
+
         public void AddHistory(string historyToAdd)
         {
             history += historyToAdd;
-            OnAddHistory?.Invoke(historyToAdd);
+            if (IsActive)
+                OnAddHistory?.Invoke(historyToAdd);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

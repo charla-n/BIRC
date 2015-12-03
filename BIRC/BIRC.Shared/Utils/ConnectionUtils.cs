@@ -36,5 +36,16 @@ namespace BIRC.Shared.Utils
                 });
             }
         }
+
+        public static void RemoveChannel(Channel channel)
+        {
+            MainPage.RunActionOnUiThread(() =>
+            {
+                ObservableCollection<AHistory> col = ConnectionFile.Instance().Connections;
+
+                ((BIRCViewModel)MainPage.currentDataContext).ServerSelection = channel.ParentConnection;
+                col.Remove(channel);
+            });
+        }
     }
 }

@@ -122,7 +122,7 @@ namespace BIRC.ViewModels
             }
         }
 
-        public IEnumerable<string> UserList
+        public IEnumerable<AHistory> UserList
         {
             get
             {
@@ -130,7 +130,7 @@ namespace BIRC.ViewModels
 
                 if (channel != null)
                     return channel.Users;
-                return new List<string>();
+                return new List<AHistory>();
             }
         }
 
@@ -165,7 +165,9 @@ namespace BIRC.ViewModels
             set
             {
                 OnBeforeServerSelectionChanged?.Invoke();
+                GetSelectedConnection().IsActive = false;
                 serverSelection = value;
+                GetSelectedConnection().IsActive = true;
                 OnAfterServerSelectionChanged?.Invoke();
                 OnPropertyChanged("ServerSelection");
                 OnPropertyChanged("UserList");

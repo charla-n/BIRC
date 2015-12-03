@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Linq;
 
 namespace BIRC.Shared.Models
 {
@@ -10,14 +11,14 @@ namespace BIRC.Shared.Models
     {
         public Channel()
         {
-            users = new ObservableCollection<string>();
+            users = new ObservableCollection<Channel>();
             history = string.Empty;
         }
 
         [JsonIgnore]
-        private ObservableCollection<string> users;
+        private ObservableCollection<Channel> users;
         [JsonIgnore]
-        public ObservableCollection<string> Users {
+        public ObservableCollection<Channel> Users {
             get
             {
                 return users;
@@ -36,7 +37,7 @@ namespace BIRC.Shared.Models
         [JsonIgnore]
         public Connection ParentConnection { get; set; }
 
-        public void AddUser(string user)
+        public void AddUser(Channel user)
         {
             MainPage.RunActionOnUiThread(() =>
             {
@@ -44,7 +45,7 @@ namespace BIRC.Shared.Models
             });
         }
 
-        public void RemoveUser(string user)
+        public void RemoveUser(Channel user)
         {
             MainPage.RunActionOnUiThread(() =>
             {
