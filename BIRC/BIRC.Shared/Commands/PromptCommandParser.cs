@@ -24,7 +24,9 @@ namespace BIRC.Shared.Commands
                 { "/help", Help },
                 { "/info", Info },
                 { "/join", Join },
-                { "/part", Part }
+                { "/part", Part },
+                { "/msg", Msg },
+                { "/nick", Nick },
         };
 
         public static void Parse(string cmd, AHistory c, List<string> p)
@@ -35,6 +37,22 @@ namespace BIRC.Shared.Commands
                 Message(cmd, c);
             else
                 Commands[cmd].Invoke(p, c);
+        }
+
+        private static void Nick(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2)
+                throw new ErrorBIRC(MainPage.GetErrorString("NickNoParam")); //TODO
+            c.Command.Nick(list[1]);
+        }
+
+        private static void Msg(IList<string> list, AHistory c)
+        {
+            if (list.Count < 3)
+                throw new ErrorBIRC(MainPage.GetErrorString("MsgNoParam")); //TODO
+            IEnumerable<string> msg = list.Skip(2);
+
+            c.Command.SendMessage(list[1], string.Join(" ", msg));
         }
 
         private static void Message(string msg, AHistory c)
@@ -54,7 +72,7 @@ namespace BIRC.Shared.Commands
         private static void Part(IList<string> list, AHistory c)
         {
             if (list.Count == 1)
-                throw new ErrorBIRC(MainPage.GetErrorString("PartNoParam"));
+                throw new ErrorBIRC(MainPage.GetErrorString("PartNoParam")); // TODO
             if (list.Count == 2)
                 c.Command.Part(list[1].Split(COMMA_SEPARATORS));
         }

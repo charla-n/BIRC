@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Linq;
+using IrcDotNet;
 
 namespace BIRC.Shared.Models
 {
@@ -15,6 +16,8 @@ namespace BIRC.Shared.Models
             history = string.Empty;
         }
 
+        [JsonIgnore]
+        public IrcUser IrcUser { get; set; }
         [JsonIgnore]
         private ObservableCollection<Channel> users;
         [JsonIgnore]

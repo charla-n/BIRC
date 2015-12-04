@@ -141,6 +141,9 @@
   <data name="Mode" xml:space="preserve">
     <value>Usermode {0}</value>
   </data>
+  <data name="NicknameChanged" xml:space="preserve">
+    <value>{0} has changed his nickname to {1}</value>
+  </data>
   <data name="NoChannels" xml:space="preserve">
     <value>No channels</value>
   </data>

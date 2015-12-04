@@ -22,7 +22,19 @@ namespace BIRC.Shared.Models
             CommandHistory = new HistoryList();
         }
 
-        public string Name { get; set; }
+        public string name { get; set; }
+        [JsonIgnore]
+        public string Name {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+                OnPropertyChanged("Name");
+            }
+        }
         [JsonIgnore]
         public Command Command { get; set; }
         [JsonIgnore]

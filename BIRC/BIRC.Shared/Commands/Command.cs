@@ -97,6 +97,11 @@ namespace BIRC.Shared.Commands
             client.Channels.Leave(channels);
         }
 
+        public void Nick(string nickname)
+        {
+            client.LocalUser.SetNickName(nickname);
+        }
+
         public async void Connect()
         {
             client = new StandardIrcClient();
@@ -182,7 +187,7 @@ namespace BIRC.Shared.Commands
             client.LocalUser.MessageReceived += LocalUser_MessageReceived;
             client.LocalUser.MessageSent += LocalUser_MessageSent;
             client.LocalUser.ModesChanged += LocalUser_ModesChanged;
-            client.LocalUser.NickNameChanged += LocalUser_NickNameChanged;
+            //client.LocalUser.NickNameChanged += LocalUser_NickNameChanged;
             client.LocalUser.NoticeReceived += LocalUser_NoticeReceived;
             client.LocalUser.NoticeSent += LocalUser_NoticeSent;
         }
@@ -258,8 +263,30 @@ namespace BIRC.Shared.Commands
         {
         }
 
+        private void GNicknameChanged(IrcUser suser)
+        {
+            foreach (Channel mychannel in connection.Channels)
+            {
+                Channel user = mychannel.Users.FirstOrDefault(p => p.IrcUser == suser);
+                if (user != null)
+                {
+                    mychannel.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("NicknameChanged"),
+                        user.Name, suser.NickName)));
+                    user.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("NicknameChanged"),
+                        user.Name, suser.NickName)));
+                    MainPage.RunActionOnUiThread(() =>
+                    {
+                        user.Name = suser.NickName;
+                    });
+                }
+            }
+        }
+
         private void LocalUser_NickNameChanged(object sender, EventArgs e)
         {
+            IrcLocalUser user = sender as IrcLocalUser;
+
+            GNicknameChanged(user);
         }
 
         private void LocalUser_ModesChanged(object sender, EventArgs e)
@@ -278,12 +305,11 @@ namespace BIRC.Shared.Commands
             {
                 foreach (Channel curchan in connection.Channels)
                 {
-                    foreach (Channel curusers in curchan.Users)
+                    Channel curuser = curchan.Users.FirstOrDefault(p => p.Name == e.Targets[0].Name);
+
+                    if (curuser != null)
                     {
-                        if (curusers.Name == e.Targets[0].Name)
-                        {
-                            curusers.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, true));
-                        }
+                        curuser.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, true));
                     }
                 }
             }
@@ -291,6 +317,15 @@ namespace BIRC.Shared.Commands
 
         private void LocalUser_MessageReceived(object sender, IrcMessageEventArgs e)
         {
+            foreach (Channel curchan in connection.Channels)
+            {
+                Channel curuser = curchan.Users.FirstOrDefault(p => p.Name == e.Source.Name);
+
+                if (curuser != null)
+                {
+                    curuser.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
+                }
+            }
         }
 
         private void LocalUser_LeftChannel(object sender, IrcChannelEventArgs e)
@@ -352,7 +387,8 @@ namespace BIRC.Shared.Commands
                     Name = p.User.NickName,
                     Users = null,
                     Command = connection.Command,
-                    ParentConnection = connection
+                    ParentConnection = connection,
+                    IrcUser = p.User
                 }));
             foreach (IrcChannelUser user in channel.Users)
             {
@@ -378,6 +414,7 @@ namespace BIRC.Shared.Commands
 
         private void User_NickNameChanged(object sender, EventArgs e)
         {
+            GNicknameChanged((IrcUser)sender);
         }
 
         private void GUserLeft(IrcUser user, string comment)
@@ -400,7 +437,6 @@ namespace BIRC.Shared.Commands
 
         private void User_Quit(object sender, IrcCommentEventArgs e)
         {
-            
             GUserLeft((IrcUser)sender, e.Comment);
         }
 
@@ -427,7 +463,8 @@ namespace BIRC.Shared.Commands
                 Users = null,
                 ParentConnection = connection,
                 Name = e.ChannelUser.User.NickName,
-                Command = connection.Command
+                Command = connection.Command,
+                IrcUser = e.ChannelUser.User
             });
             mychannel.AddHistory(HtmlWriter.WriteFrom("has joined", e.ChannelUser.User.NickName, false));
         }
