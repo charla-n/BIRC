@@ -56,6 +56,7 @@
                         <ListView x:Name="serverListView"
                                   ItemsSource="{Binding ByServers}"
                                   IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}"
+                                  Tapped="serverListView_Tapped"
                                   RelativePanel.AlignLeftWithPanel="True"
                                   RelativePanel.AlignRightWithPanel="True"
                                   RelativePanel.Below="ConnectionsTitleTxt">
@@ -74,7 +75,7 @@
                                    RelativePanel.Below="serverListView" Margin="0,10,2,0" 
                                    >Users</TextBlock>
                         <ListView x:Name="UsersListView" RelativePanel.Below="UserTitleTxt"
-                                  ItemsSource="{Binding UserList}"
+                                  ItemsSource="{Binding UserList}" SelectedItem="{Binding UserSelection, Mode=TwoWay}"
                                   IsSynchronizedWithCurrentItem="False"
                                   RelativePanel.AlignLeftWithPanel="True"
                                   RelativePanel.AlignRightWithPanel="True">

@@ -137,11 +137,13 @@ namespace BIRC
             {
                 e.Handled = true;
                 vm.CommandTxt = vm.GetSelectedConnection().CommandHistory.UpHistory();
+                CommandTxtBox.SelectionStart = vm.CommandTxt.Length;
             }
             else if (e.Key == Windows.System.VirtualKey.Down)
             {
                 e.Handled = true;
                 vm.CommandTxt = vm.GetSelectedConnection().CommandHistory.DownHistory();
+                CommandTxtBox.SelectionStart = vm.CommandTxt.Length;
             }
         }
 
@@ -153,6 +155,14 @@ namespace BIRC
         private void WebView_LostFocus(object sender, RoutedEventArgs e)
         {
             WebViewHasFocus = false;
+        }
+
+        private void serverListView_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ListView lv = sender as ListView;
+
+            ((BIRCViewModel)currentDataContext).ServerSelection = lv.SelectedItem;
+            UsersListView.SelectedItem = null;
         }
     }
 }

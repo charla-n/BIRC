@@ -25,6 +25,7 @@ namespace BIRC.ViewModels
         private Connection defaultConnection;
         private string commandTxt;
         private object serverSelection;
+        private object userSelection;
         private RelayCommand AddConnectionCmd;
         private RelayCommand ConnectionCmd;
         private RelayCommand CommandCmd;
@@ -165,12 +166,49 @@ namespace BIRC.ViewModels
             set
             {
                 OnBeforeServerSelectionChanged?.Invoke();
+                MakeUserDisabled();
                 GetSelectedConnection().IsActive = false;
                 serverSelection = value;
                 GetSelectedConnection().IsActive = true;
                 OnAfterServerSelectionChanged?.Invoke();
                 OnPropertyChanged("ServerSelection");
                 OnPropertyChanged("UserList");
+            }
+        }
+
+        public object UserSelection {
+            get
+            {
+                return userSelection;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    OnBeforeServerSelectionChanged?.Invoke();
+                    GetSelectedConnection().IsActive = false;
+                    userSelection = value;
+                    serverSelection = value;
+                    GetSelectedConnection().IsActive = true;
+                    OnAfterServerSelectionChanged?.Invoke();
+                    OnPropertyChanged("ServerSelection");
+                }
+            }
+        }
+
+        private void MakeUserDisabled()
+        {
+            AHistory unk = GetSelectedConnection();
+            Channel channel;
+
+            if (unk is Channel)
+            {
+                channel = unk as Channel;
+                if (channel.Users != null)
+                {
+                    foreach (Channel user in channel.Users)
+                        user.IsActive = false;
+                }
             }
         }
 

@@ -41,9 +41,13 @@ namespace BIRC.Shared.Commands
         {
             Channel channel = c as Channel;
 
-            if (channel != null)
+            if (channel != null && channel.RealName != null)
             {
                 channel.ParentConnection.Command.SendMessage(channel.RealName, msg);
+            }
+            else if (channel != null && channel.RealName == null)
+            {
+                channel.ParentConnection.Command.SendMessage(channel.Name, msg);
             }
         }
 

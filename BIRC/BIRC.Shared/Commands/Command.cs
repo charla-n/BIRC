@@ -274,6 +274,19 @@ namespace BIRC.Shared.Commands
             {
                 curChannel.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, true));
             }
+            else
+            {
+                foreach (Channel curchan in connection.Channels)
+                {
+                    foreach (Channel curusers in curchan.Users)
+                    {
+                        if (curusers.Name == e.Targets[0].Name)
+                        {
+                            curusers.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, true));
+                        }
+                    }
+                }
+            }
         }
 
         private void LocalUser_MessageReceived(object sender, IrcMessageEventArgs e)

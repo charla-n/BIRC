@@ -8,14 +8,14 @@ namespace BIRC.Shared.Utils
 {
     public class HistoryList : IList<string>
     {
-        private static int MAX_SIZE = 50;
+        private static int MAX_SIZE = 20;
         private List<string> list;
         private int index;
 
         public HistoryList()
         {
             index = -1;
-            list = new List<string>();
+            list = new List<string>(MAX_SIZE);
         }
 
         public int Count
@@ -28,20 +28,24 @@ namespace BIRC.Shared.Utils
 
         public string UpHistory()
         {
-            index++;
-            if (index > (MAX_SIZE - 1))
-                index = MAX_SIZE - 1;
-            if (index == list.Count())
-                index--;
-            return list.ElementAtOrDefault(index);
+            index--;
+            if (index < 0)
+                index = 0;
+            string res = list.ElementAtOrDefault(index);
+            if (res == null)
+                return string.Empty;
+            return res;
         }
 
         public string DownHistory()
         {
-            index--;
-            if (index < -1)
-                index = -1;
-            return list.ElementAtOrDefault(index);
+            index++;
+            if (index > list.Count)
+                index = list.Count;
+            string res = list.ElementAtOrDefault(index);
+            if (res == null)
+                return string.Empty;
+            return res;
         }
 
         public bool IsReadOnly
@@ -83,9 +87,9 @@ namespace BIRC.Shared.Utils
         public void Add(string item)
         {
             if (list.Count == MAX_SIZE)
-                list.RemoveAt(MAX_SIZE - 1);
-            index = -1;
+                list.RemoveAt(0);
             list.Add(item);
+            index = list.Count;
         }
 
         public void Clear()
