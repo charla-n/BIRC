@@ -114,6 +114,10 @@ namespace BIRC.Shared.Models
         public void AddChannel(Channel channel)
         {
             Channels.Add(channel);
+            MainPage.RunActionOnUiThread(() =>
+            {
+                MainPage.currentDataContext.Changed("");
+            });
         }
     }
 }

@@ -14,8 +14,24 @@ namespace BIRC.Shared.Models
         {
             users = new ObservableCollection<Channel>();
             history = string.Empty;
+            unread = 0;
         }
 
+        [JsonIgnore]
+        public int unread;
+        [JsonIgnore]
+        public int Unread
+        {
+            get
+            {
+                return unread;
+            }
+            set
+            {
+                unread = value;
+                OnPropertyChanged("Unread");
+            }
+        }
         [JsonIgnore]
         public IrcUser IrcUser { get; set; }
         [JsonIgnore]

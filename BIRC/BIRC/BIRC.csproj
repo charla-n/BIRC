@@ -99,6 +99,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\BooleanToFontWeight.cs" />
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utils\ICollectionFilter\ICollectionViewEx.cs" />
     <Compile Include="Utils\ICollectionFilter\ListCollectionView.cs" />

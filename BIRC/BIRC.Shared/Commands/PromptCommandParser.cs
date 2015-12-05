@@ -27,6 +27,9 @@ namespace BIRC.Shared.Commands
                 { "/part", Part },
                 { "/msg", Msg },
                 { "/nick", Nick },
+                { "/notice", Notice },
+                { "/quit", Quit },
+                { "/partall", PartAll },
         };
 
         public static void Parse(string cmd, AHistory c, List<string> p)
@@ -37,6 +40,18 @@ namespace BIRC.Shared.Commands
                 Message(cmd, c);
             else
                 Commands[cmd].Invoke(p, c);
+        }
+
+        private static void Quit(IList<string> list, AHistory c)
+        {
+            c.Command.Disconnect();
+        }
+
+        private static void Notice(IList<string> list, AHistory c)
+        {
+            if (list.Count < 3)
+                throw new ErrorBIRC(MainPage.GetErrorString("NoticeNoParam")); //TODO
+            c.Command.Notice(list[1].Split(COMMA_SEPARATORS), string.Join(" ", list.Skip(2)));
         }
 
         private static void Nick(IList<string> list, AHistory c)
@@ -67,6 +82,16 @@ namespace BIRC.Shared.Commands
             {
                 channel.ParentConnection.Command.SendMessage(channel.Name, msg);
             }
+        }
+
+        private static void PartAll(IList<string> list, AHistory c)
+        {
+            Connection co = c as Connection;
+            Channel channel = c as Channel;
+
+            if (co == null)
+                co = channel.ParentConnection;
+            c.Command.Part(co.Channels.Select(p => p.RealName));
         }
 
         private static void Part(IList<string> list, AHistory c)

@@ -24,6 +24,7 @@ namespace BIRC.ViewModels
 
         private Connection defaultConnection;
         private string commandTxt;
+        private object oldServerSelection;
         private object serverSelection;
         private object userSelection;
         private RelayCommand AddConnectionCmd;
@@ -32,6 +33,7 @@ namespace BIRC.ViewModels
 
         public BIRCViewModel()
         {
+            oldServerSelection = null;
             commandTxt = string.Empty;
             defaultConnection = new Connection() { IsDefault = true };
             RetrieveList();
@@ -95,6 +97,8 @@ namespace BIRC.ViewModels
                 if (GetSelectedConnection() == null)
                     return "Connect";
                 co = GetSelectedConnection() as Connection;
+                if (co == null)
+                    return "Connect";
                 if (co.Connected)
                     return "Disconnect";
                 else
@@ -169,6 +173,7 @@ namespace BIRC.ViewModels
                 MakeUserDisabled();
                 GetSelectedConnection().IsActive = false;
                 serverSelection = value;
+                SetUnreadOnChange();
                 GetSelectedConnection().IsActive = true;
                 OnAfterServerSelectionChanged?.Invoke();
                 OnPropertyChanged("ServerSelection");
@@ -176,6 +181,21 @@ namespace BIRC.ViewModels
             }
         }
 
+        private void SetUnreadOnChange()
+        {
+            Channel c = serverSelection as Channel;
+
+            if (c != null)
+            {
+                Channel cur = c.Users.FirstOrDefault(p => p.Unread > 0);
+
+                if (cur == null && c.Unread == 1)
+                    c.Unread = 0;
+                else if (cur == null && c.Unread == 2)
+                    c.Unread = 1;
+            }
+        }
+         
         public object UserSelection {
             get
             {
@@ -187,11 +207,38 @@ namespace BIRC.ViewModels
                 {
                     OnBeforeServerSelectionChanged?.Invoke();
                     GetSelectedConnection().IsActive = false;
+                    if (oldServerSelection == null)
+                        oldServerSelection = serverSelection;
                     userSelection = value;
                     serverSelection = value;
+                    SetUserUnreadOnChange();
                     GetSelectedConnection().IsActive = true;
                     OnAfterServerSelectionChanged?.Invoke();
                     OnPropertyChanged("ServerSelection");
+                }
+                else
+                    oldServerSelection = null;
+            }
+        }
+
+        private void SetUserUnreadOnChange()
+        {
+            Channel c = serverSelection as Channel;
+
+            if (c != null)
+            {
+                c.Unread = 0;
+
+                Channel oldToChannel = oldServerSelection as Channel;
+
+                if (oldToChannel != null)
+                {
+                    Channel cur = oldToChannel.Users.FirstOrDefault(p => p.Unread > 0);
+
+                    if (oldToChannel.Unread == 1 && cur == null)
+                        oldToChannel.Unread = 0;
+                    if (oldToChannel.Unread == 2 && cur == null)
+                        oldToChannel.Unread = 1;
                 }
             }
         }

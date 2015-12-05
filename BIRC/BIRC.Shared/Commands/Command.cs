@@ -102,6 +102,17 @@ namespace BIRC.Shared.Commands
             client.LocalUser.SetNickName(nickname);
         }
 
+        public void Notice(IEnumerable<string> target, string msg)
+        {
+            client.LocalUser.SendNotice(target, msg);
+        }
+
+        public void Quit()
+        {
+            client.Disconnect();
+            connection.Channels.Clear();
+        }
+
         public async void Connect()
         {
             client = new StandardIrcClient();
@@ -257,10 +268,12 @@ namespace BIRC.Shared.Commands
 
         private void LocalUser_NoticeSent(object sender, IrcMessageEventArgs e)
         {
+            LocalUser_MessageSent(sender, e);
         }
 
         private void LocalUser_NoticeReceived(object sender, IrcMessageEventArgs e)
         {
+            LocalUser_MessageReceived(sender, e);
         }
 
         private void GNicknameChanged(IrcUser suser)
@@ -323,6 +336,14 @@ namespace BIRC.Shared.Commands
 
                 if (curuser != null)
                 {
+                    if (!curuser.IsActive)
+                    {
+                        MainPage.RunActionOnUiThread(() =>
+                        {
+                            curchan.Unread = 1;
+                            curuser.Unread = 1;
+                        });
+                    }
                     curuser.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
                 }
             }
@@ -437,11 +458,16 @@ namespace BIRC.Shared.Commands
 
         private void User_Quit(object sender, IrcCommentEventArgs e)
         {
-            GUserLeft((IrcUser)sender, e.Comment);
+            var user = sender as IrcUser;
+
+            foreach (IrcChannelUser cuser in user.GetChannelUsers())
+                cuser.ModesChanged -= User_ModesChanged;
+            GUserLeft(user, e.Comment);
         }
 
         private void Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
         {
+            e.ChannelUser.ModesChanged -= User_ModesChanged;
             GUserLeft(e.ChannelUser.User, e.Comment);
         }
 
@@ -457,6 +483,7 @@ namespace BIRC.Shared.Commands
             e.ChannelUser.User.NickNameChanged += User_NickNameChanged;
             e.ChannelUser.User.IsAwayChanged += User_IsAwayChanged;
             e.ChannelUser.User.InviteReceived += User_InviteReceived;
+            e.ChannelUser.ModesChanged += User_ModesChanged;
 
             mychannel.AddUser(new Channel()
             {
@@ -479,6 +506,7 @@ namespace BIRC.Shared.Commands
 
         private void Channel_NoticeReceived(object sender, IrcMessageEventArgs e)
         {
+            Channel_MessageReceived(sender, e);
         }
 
         private void Channel_ModesChanged(object sender, IrcUserEventArgs e)
@@ -493,6 +521,16 @@ namespace BIRC.Shared.Commands
 
                 if (curChannel != null)
                 {
+                    if (!curChannel.IsActive)
+                    {
+                        MainPage.RunActionOnUiThread(() =>
+                        {
+                            if (curChannel.Unread == 1)
+                                curChannel.Unread = 2;
+                            else
+                                curChannel.Unread = 1;
+                        });
+                    }
                     curChannel.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
                 }
             }

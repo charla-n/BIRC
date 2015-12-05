@@ -90,7 +90,16 @@ namespace IrcDotNet
             var comment = message.Parameters[1];
             var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
             if (sourceUser == this.localUser)
-                channels.ForEach(c => this.localUser.HandleLeftChannel(c));
+            {
+                channels.ForEach(c =>
+                {
+                    localUser.HandleLeftChannel(c);
+                    for (int i = c.Users.Count - 1; i >= 0; i--)
+                    {
+                        c.HandleUserLeft(c.Users[i], "");
+                    }
+                });
+            }
             else
                 channels.ForEach(c => c.HandleUserLeft(sourceUser, comment));
         }
