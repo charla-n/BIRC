@@ -30,6 +30,11 @@ namespace BIRC.Shared.Commands
                 { "/notice", Notice },
                 { "/quit", Quit },
                 { "/partall", PartAll },
+                { "/ignore", Ignore },
+                { "/unignore", UnIgnore },
+                { "/whois", Whois },
+                { "/whowas", Whowas },
+                { "/who", Who },
         };
 
         public static void Parse(string cmd, AHistory c, List<string> p)
@@ -40,6 +45,42 @@ namespace BIRC.Shared.Commands
                 Message(cmd, c);
             else
                 Commands[cmd].Invoke(p, c);
+        }
+
+        private static void Who(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2)
+                c.Command.Who(null);
+            else
+                c.Command.Who(list[1]);
+        }
+
+        private static void Whowas(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2)
+                throw new ErrorBIRC(MainPage.GetErrorString("WhowasNoParam")); //TODO
+            c.Command.Whowas(list[1].Split(COMMA_SEPARATORS));
+        }
+
+        private static void Whois(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2)
+                throw new ErrorBIRC(MainPage.GetErrorString("WhoisNoParam")); //TODO
+            c.Command.Whois(list[1].Split(COMMA_SEPARATORS));
+        }
+
+        private static void Ignore(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2)
+                throw new ErrorBIRC(MainPage.GetErrorString("IgnoreNoParam")); //TODO
+            c.Command.ChangeIgnoreState(list[1], true);
+        }
+
+        private static void UnIgnore(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2)
+                throw new ErrorBIRC(MainPage.GetErrorString("UnIgnoreNoParam")); //TODO
+            c.Command.ChangeIgnoreState(list[1], false);
         }
 
         private static void Quit(IList<string> list, AHistory c)

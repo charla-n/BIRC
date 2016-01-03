@@ -165,4 +165,7 @@
   <data name="TryToConnect" xml:space="preserve">
     <value>Try to connect on {0}:{1}</value>
   </data>
+  <data name="Whois" xml:space="preserve">
+    <value>Whois on {0}:{1}&lt;br/&gt;Realname {2}&lt;br/&gt;IsAway {3}&lt;br/&gt;IsOnline {4}&lt;br/&gt;IsOperator {5}&lt;br/&gt;Idle duration {6}</value>
+  </data>
 </root>

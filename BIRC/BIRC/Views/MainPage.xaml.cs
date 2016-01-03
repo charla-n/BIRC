@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -31,6 +33,9 @@ namespace BIRC
         private static CoreDispatcher dispatcher;
         private static ResourceLoader infoloader;
         private static ResourceLoader errorloader;
+        private ManualResetEvent resetEvent;
+        private ManualResetEvent resetEventAddHistory;
+        private WebView WebView;
 
         private bool WebViewHasFocus;
 
@@ -58,31 +63,64 @@ namespace BIRC
             ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory += MainPage_OnAddHistory;
             ((BIRCViewModel)currentDataContext).OnBeforeServerSelectionChanged += CurrentDataContext_OnBeforeServerSelectionChanged;
             ((BIRCViewModel)currentDataContext).OnAfterServerSelectionChanged += CurrentDataContext_OnAfterServerSelectionChanged;
+            resetEvent = new ManualResetEvent(false);
+            resetEventAddHistory = new ManualResetEvent(false);
+            WebView = new WebView();
+            WebView.Navigate(new Uri("ms-appx-web:///assets/base.html"));
+            WebViewContainer.Children.Add(WebView);
         }
 
-        private async void CurrentDataContext_OnAfterServerSelectionChanged()
+        private void CurrentDataContext_OnAfterServerSelectionChanged()
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            Task.Run(async () =>
             {
-                ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory += MainPage_OnAddHistory;
-                await WebView.InvokeScriptAsync("replaceContent",
-                    new string[] { ((BIRCViewModel)currentDataContext).GetSelectedConnection().History });
+                resetEvent.WaitOne();
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory += MainPage_OnAddHistory;
+                    await WebView.InvokeScriptAsync("replaceContent",
+                        new string[] { ((BIRCViewModel)currentDataContext).GetSelectedConnection().History });
+                    resetEventAddHistory.Set();
+                });
+                resetEvent.Reset();
             });
         }
 
         private async void CurrentDataContext_OnBeforeServerSelectionChanged()
         {
+            resetEventAddHistory.Reset();
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory -= MainPage_OnAddHistory;
             });
+            WebView.LoadCompleted -= WebView_LoadCompleted;
+            WebViewContainer.Children.Clear();
+            GC.Collect();
+            AddWebView();
         }
 
-        private async void MainPage_OnAddHistory(string obj)
+        private void AddWebView()
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            WebView = new WebView();
+            WebView.LoadCompleted += WebView_LoadCompleted;
+            WebView.Navigate(new Uri("ms-appx-web:///assets/base.html"));
+            WebViewContainer.Children.Add(WebView);
+        }
+
+        private void WebView_LoadCompleted(object sender, NavigationEventArgs e)
+        {
+            resetEvent.Set();
+        }
+
+        private void MainPage_OnAddHistory(string obj)
+        {
+            Task.Run(async () =>
             {
-                await WebView.InvokeScriptAsync("insertContent", new string[] { obj });
+                resetEventAddHistory.WaitOne();
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    await WebView.InvokeScriptAsync("insertContent", new string[] { obj });
+                });
             });
         }
 

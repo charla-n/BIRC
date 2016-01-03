@@ -227,18 +227,18 @@ namespace BIRC.ViewModels
 
             if (c != null)
             {
-                c.Unread = 0;
-
-                Channel oldToChannel = oldServerSelection as Channel;
-
-                if (oldToChannel != null)
+                foreach (Channel cur in c.ParentConnection.Channels)
                 {
-                    Channel cur = oldToChannel.Users.FirstOrDefault(p => p.Unread > 0);
+                    Channel curuser = cur.Users.FirstOrDefault(p => p.Name == c.Name);
+                    if (curuser != null)
+                    {
+                        curuser.Unread = 0;
 
-                    if (oldToChannel.Unread == 1 && cur == null)
-                        oldToChannel.Unread = 0;
-                    if (oldToChannel.Unread == 2 && cur == null)
-                        oldToChannel.Unread = 1;
+                        if (cur.Unread == 1)
+                            cur.Unread = 0;
+                        if (cur.Unread == 2)
+                            cur.Unread = 1;
+                    }
                 }
             }
         }

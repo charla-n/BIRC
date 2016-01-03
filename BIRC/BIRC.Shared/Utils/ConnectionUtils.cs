@@ -47,5 +47,34 @@ namespace BIRC.Shared.Utils
                 col.Remove(channel);
             });
         }
+
+        public static bool IsUserIgnored(Channel channel, string nickname)
+        {
+            if (channel.Users.Count == 0)
+                return channel.Ignored;
+
+            Channel user = channel.Users.FirstOrDefault(p => p.Name == nickname);
+            if (user == null)
+                return false;
+            return user.Ignored;
+        }
+
+        public static AHistory GetActiveAHistory(Connection connection)
+        {
+            AHistory active = connection.Channels.FirstOrDefault(p => p.IsActive == true);
+
+            if (active == null)
+            {
+                foreach (Channel cur in connection.Channels)
+                {
+                    active = cur.Users.FirstOrDefault(p => p.IsActive == true);
+                    if (active != null)
+                        break;
+                }
+                if (active == null)
+                    active = connection;
+            }
+            return active;
+        }
     }
 }

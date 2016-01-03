@@ -102,9 +102,35 @@ namespace BIRC.Shared.Commands
             client.LocalUser.SetNickName(nickname);
         }
 
+        public void ChangeIgnoreState(string nickname, bool status)
+        {
+            foreach (Channel cur in connection.Channels)
+            {
+                Channel user = cur.Users.FirstOrDefault(p => p.Name == nickname);
+
+                if (user != null)
+                    user.Ignored = status;
+            }
+        }
+
         public void Notice(IEnumerable<string> target, string msg)
         {
             client.LocalUser.SendNotice(target, msg);
+        }
+
+        public void Whois(IEnumerable<string> nicknames)
+        {
+            client.QueryWhoIs(nicknames);
+        }
+
+        public void Whowas(IEnumerable<string> nicknames)
+        {
+            client.QueryWhoWas(nicknames);
+        }
+
+        public void Who(string mask)
+        {
+            client.QueryWho(mask);
         }
 
         public void Quit()
@@ -163,6 +189,10 @@ namespace BIRC.Shared.Commands
 
         private void Client_WhoIsReplyReceived(object sender, IrcUserEventArgs e)
         {
+            AHistory active = ConnectionUtils.GetActiveAHistory(connection);
+
+            active.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("Whois"), e.User.NickName, e.User.HostName,
+                e.User.RealName, e.User.IsAway, e.User.IsOnline, e.User.IsOperator, e.User.IdleDuration.ToString("c"))));
         }
 
         private void Client_ServerVersionInfoReceived(object sender, IrcServerVersionInfoEventArgs e)
@@ -198,7 +228,7 @@ namespace BIRC.Shared.Commands
             client.LocalUser.MessageReceived += LocalUser_MessageReceived;
             client.LocalUser.MessageSent += LocalUser_MessageSent;
             client.LocalUser.ModesChanged += LocalUser_ModesChanged;
-            //client.LocalUser.NickNameChanged += LocalUser_NickNameChanged;
+            client.LocalUser.NickNameChanged += LocalUser_NickNameChanged;
             client.LocalUser.NoticeReceived += LocalUser_NoticeReceived;
             client.LocalUser.NoticeSent += LocalUser_NoticeSent;
         }
@@ -344,7 +374,8 @@ namespace BIRC.Shared.Commands
                             curuser.Unread = 1;
                         });
                     }
-                    curuser.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
+                    if (ConnectionUtils.IsUserIgnored(curuser, e.Source.Name) == false)
+                        curuser.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
                 }
             }
         }
@@ -531,7 +562,8 @@ namespace BIRC.Shared.Commands
                                 curChannel.Unread = 1;
                         });
                     }
-                    curChannel.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
+                    if (ConnectionUtils.IsUserIgnored(curChannel, e.Source.Name) == false)
+                        curChannel.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
                 }
             }
         }

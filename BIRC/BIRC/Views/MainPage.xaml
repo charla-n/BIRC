@@ -53,7 +53,7 @@
                     </Grid.RowDefinitions>
                     <RelativePanel Grid.Row="1">
                         <TextBlock x:Name="ConnectionsTitleTxt" Style="{ThemeResource TitleTextBlockStyle}"
-                                   Margin="0,0,2,0">Connections</TextBlock>
+                                   Margin="4,0,2,0">Connections</TextBlock>
                         <ListView x:Name="serverListView"
                                   ItemsSource="{Binding ByServers}"
                                   IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding ServerSelection, Mode=TwoWay}"
@@ -74,7 +74,7 @@
                             </ListView.ItemTemplate>
                         </ListView>
                         <TextBlock x:Name="UserTitleTxt" Style="{ThemeResource TitleTextBlockStyle}"
-                                   RelativePanel.Below="serverListView" Margin="0,10,2,0" 
+                                   RelativePanel.Below="serverListView" Margin="4,10,2,0" 
                                    >Users</TextBlock>
                         <ListView x:Name="UsersListView" RelativePanel.Below="UserTitleTxt"
                                   ItemsSource="{Binding UserList}" SelectedItem="{Binding UserSelection, Mode=TwoWay}"
@@ -111,17 +111,17 @@
             </SplitView.Pane>
             <SplitView.Content>
                 <RelativePanel x:Name="MainPanel" Margin="5,32,5,0">
-                    <WebView x:Name="WebView" Source="ms-appx-web:///assets/base.html"
+                    <Grid x:Name="WebViewContainer"
                              RelativePanel.AlignLeftWithPanel="True" 
                              RelativePanel.AlignRightWithPanel="True"
                              RelativePanel.AlignTopWithPanel="True"
                              RelativePanel.AlignBottomWithPanel="True"
-                             Margin="0,0,0,36" GotFocus="WebView_GotFocus" LostFocus="WebView_LostFocus">
-                    </WebView>
+                             Margin="0,0,0,36">
+                    </Grid>
                     <Grid Height="32" x:Name="GridCommand" 
                           RelativePanel.AlignLeftWithPanel="True" 
                           RelativePanel.AlignRightWithPanel="True"
-                          RelativePanel.AlignBottomWith="WebView" Margin="0,0,5,0">
+                          RelativePanel.AlignBottomWith="WebViewContainer" Margin="0,0,5,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="52"/>

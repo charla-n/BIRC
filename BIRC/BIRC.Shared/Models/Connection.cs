@@ -9,12 +9,26 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using Windows.UI.Core;
+using System.Linq;
 
 namespace BIRC.Shared.Models
 {
     public abstract class AHistory : INotifyPropertyChanged
     {
-        public event Action<string> OnAddHistory;
+        public Action<string> onAddHistory;
+        public event Action<string> OnAddHistory {
+            add
+            {
+                if (onAddHistory == null || !onAddHistory.GetInvocationList().Contains(value))
+                {
+                    onAddHistory += value;
+                }
+            }
+            remove
+            {
+                onAddHistory -= value;
+            }
+        }
 
         public AHistory()
         {
@@ -57,7 +71,7 @@ namespace BIRC.Shared.Models
         {
             history += historyToAdd;
             if (IsActive)
-                OnAddHistory?.Invoke(historyToAdd);
+                onAddHistory?.Invoke(historyToAdd);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
