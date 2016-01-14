@@ -37,13 +37,15 @@ namespace BIRC
         private ManualResetEvent resetEventAddHistory;
         private WebView WebView;
 
-        private bool WebViewHasFocus;
+        private string part;
+        private string scrollToEnd;
 
         public MainPage()
         {
             this.InitializeComponent();
             Loaded += MainPage_Loaded;
-            WebViewHasFocus = false;
+            part = "";
+            scrollToEnd = "true";
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -105,6 +107,19 @@ namespace BIRC
             WebView.LoadCompleted += WebView_LoadCompleted;
             WebView.Navigate(new Uri("ms-appx-web:///assets/base.html"));
             WebViewContainer.Children.Add(WebView);
+            WebView.ScriptNotify += WebView_ScriptNotify;
+        }
+
+        private void WebView_ScriptNotify(object sender, NotifyEventArgs e)
+        {
+            if (e.Value == "stopScrollingToEnd")
+            {
+                scrollToEnd = "false";
+            }
+            else if (e.Value == "startScrollingToEnd")
+            {
+                scrollToEnd = "true";
+            }
         }
 
         private void WebView_LoadCompleted(object sender, NavigationEventArgs e)
@@ -120,6 +135,7 @@ namespace BIRC
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     await WebView.InvokeScriptAsync("insertContent", new string[] { obj });
+                    await WebView.InvokeScriptAsync("scrollToBottom", new string[] { scrollToEnd.ToString() });
                 });
             });
         }
@@ -183,16 +199,6 @@ namespace BIRC
                 vm.CommandTxt = vm.GetSelectedConnection().CommandHistory.DownHistory();
                 CommandTxtBox.SelectionStart = vm.CommandTxt.Length;
             }
-        }
-
-        private void WebView_GotFocus(object sender, RoutedEventArgs e)
-        {
-            WebViewHasFocus = true;
-        }
-
-        private void WebView_LostFocus(object sender, RoutedEventArgs e)
-        {
-            WebViewHasFocus = false;
         }
 
         private void serverListView_Tapped(object sender, TappedRoutedEventArgs e)

@@ -6,6 +6,13 @@
     <title></title>
     <script src="jquery-2.1.4.min.js"></script>
     <script type="text/javascript">
+
+        $(document).ready(function () {
+            $(window).scroll(function () {
+                notifyScroll();
+            });
+        });
+
         function insertContent(html)
         {
             $("#content").append(html);
@@ -14,6 +21,21 @@
         function replaceContent(html)
         {
             $("#content").html(html);
+        }
+
+        function scrollToBottom(scrollDown)
+        {
+            if (scrollDown === "true")
+                $("html, body").animate({ scrollTop: $(document).height() }, 0);
+        }
+
+        function notifyScroll()
+        {
+            if ($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+                window.external.notify('startScrollingToEnd');
+            } else {
+                window.external.notify('stopScrollingToEnd');
+            }
         }
     </script>
 </head>
