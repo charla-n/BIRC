@@ -50,7 +50,7 @@ namespace BIRC.Shared.Utils
 
         public static bool IsUserIgnored(Channel channel, string nickname)
         {
-            if (channel.Users.Count == 0)
+            if (channel.Users == null || channel.Users.Count == 0)
                 return channel.Ignored;
 
             Channel user = channel.Users.FirstOrDefault(p => p.Name == nickname);

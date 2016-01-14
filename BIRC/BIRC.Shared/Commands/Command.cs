@@ -133,6 +133,34 @@ namespace BIRC.Shared.Commands
             client.QueryWho(mask);
         }
 
+        public void Invite(string channel, string nickname)
+        {
+            IrcChannel chan = client.Channels.FirstOrDefault(p => channel == p.Name);
+
+            if (chan != null)
+                chan.Invite(nickname);
+        }
+
+        public void Mode(string target, string mode, string parameters)
+        {
+            IrcChannel chan = client.Channels.FirstOrDefault(p => target == p.Name);
+
+            if (chan != null)
+            {
+                chan.SetModes(mode, parameters);
+            }
+        }
+
+        public void Kick(string target, string nickname, string reason)
+        {
+            IrcChannel chan = client.Channels.FirstOrDefault(p => target == p.Name);
+
+            if (chan != null)
+            {
+                chan.Kick(nickname, reason);
+            }
+        }
+
         public void Quit()
         {
             client.Disconnect();
@@ -570,6 +598,10 @@ namespace BIRC.Shared.Commands
 
         private void LocalUser_InviteReceived(object sender, IrcChannelInvitationEventArgs e)
         {
+            AHistory activeChan = ConnectionUtils.GetActiveAHistory(connection);
+
+            activeChan.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("InviteReceived"), e.Inviter.NickName, e.Channel.Name,
+                "/join " + e.Channel.Name)));
         }
 
         public void Unregister()

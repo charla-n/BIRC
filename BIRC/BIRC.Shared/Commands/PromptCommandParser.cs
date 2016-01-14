@@ -35,6 +35,13 @@ namespace BIRC.Shared.Commands
                 { "/whois", Whois },
                 { "/whowas", Whowas },
                 { "/who", Who },
+                { "/invite", Invite },
+                { "/mode", Mode },
+                { "/kick", Kick },
+                { "/op", Op },
+                { "/deop", DeOp },
+                { "/voice", Voice },
+                { "/devoice", DeVoice },
         };
 
         public static void Parse(string cmd, AHistory c, List<string> p)
@@ -45,6 +52,62 @@ namespace BIRC.Shared.Commands
                 Message(cmd, c);
             else
                 Commands[cmd].Invoke(p, c);
+        }
+
+        private static void DeVoice(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2 || !(c is Channel))
+                throw new ErrorBIRC(MainPage.GetErrorString("OpNoParam")); //TODO
+            else
+                c.Command.Mode(((Channel)c).RealName, "-v", list[1]);
+        }
+
+        private static void Voice(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2 || !(c is Channel))
+                throw new ErrorBIRC(MainPage.GetErrorString("OpNoParam")); //TODO
+            else
+                c.Command.Mode(((Channel)c).RealName, "+v", list[1]);
+        }
+
+        private static void Op(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2 || !(c is Channel))
+                throw new ErrorBIRC(MainPage.GetErrorString("OpNoParam")); //TODO
+            else
+                c.Command.Mode(((Channel)c).RealName, "+o", list[1]);
+        }
+
+        private static void DeOp(IList<string> list, AHistory c)
+        {
+            if (list.Count < 2 || !(c is Channel))
+                throw new ErrorBIRC(MainPage.GetErrorString("OpNoParam")); //TODO
+            else
+                c.Command.Mode(((Channel)c).RealName, "-o", list[1]);
+        }
+
+        private static void Kick(IList<string> list, AHistory c)
+        {
+            if (list.Count < 3)
+                throw new ErrorBIRC(MainPage.GetErrorString("KickNoParam")); //TODO
+            else
+                c.Command.Mode(list[1], list[2], list.Count == 3 ? "" : list[3]);
+        }
+
+        private static void Mode(IList<string> list, AHistory c)
+        {
+            if (list.Count < 3)
+                throw new ErrorBIRC(MainPage.GetErrorString("ModeNoParam")); //TODO
+            else
+                c.Command.Mode(list[1], list[2], list.Count == 3 ? "" : list[3]);
+        }
+
+        private static void Invite(IList<string> list, AHistory c)
+        {
+            if (list.Count < 3)
+                throw new ErrorBIRC(MainPage.GetErrorString("InviteNoParam")); //TODO
+            else
+                c.Command.Invite(list[1], list[2]);
         }
 
         private static void Who(IList<string> list, AHistory c)

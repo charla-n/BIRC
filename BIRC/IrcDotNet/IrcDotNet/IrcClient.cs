@@ -51,7 +51,7 @@ namespace IrcDotNet
             regexNickName = @"(?<nick>[^!@]+)";
             regexUserName = @"(?<user>[^!@]+)";
             regexHostName = @"(?<host>[^%@]+)";
-            regexChannelName = @"(?<channel>[#+!&].+)";
+            regexChannelName = @"(?<channel>[@#+!&].+)";
             regexTargetMask = @"(?<targetMask>[$#].+)";
             regexServerName = @"(?<server>[^%@]+?\.[^%@]*)";
             regexNickNameId = string.Format(@"{0}(?:(?:!{1})?@{2})?", regexNickName, regexUserName, regexHostName);

@@ -135,6 +135,9 @@
   <data name="Helpserver" xml:space="preserve">
     <value>/server hostname [port] [password]&lt;br/&gt;Connect to a server. If port is not specified the default port (6667) will be used.</value>
   </data>
+  <data name="InviteReceived" xml:space="preserve">
+    <value>User {0} invites you to join channel {1}. If you accept this invitation please type {2}</value>
+  </data>
   <data name="ListChannel" xml:space="preserve">
     <value>{0} ({1}) with {2} user(s)</value>
   </data>
