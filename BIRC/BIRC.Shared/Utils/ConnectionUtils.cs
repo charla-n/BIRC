@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.ObjectModel;
 using BIRC.ViewModels;
+using IrcDotNet;
 
 namespace BIRC.Shared.Utils
 {
@@ -51,12 +52,20 @@ namespace BIRC.Shared.Utils
         public static bool IsUserIgnored(Channel channel, string nickname)
         {
             if (channel.Users == null || channel.Users.Count == 0)
-                return channel.Ignored;
+            {
+                if (channel.Ignored == Channel.IGNORED)
+                    return true;
+                else
+                    return false;
+            }
 
             Channel user = channel.Users.FirstOrDefault(p => p.Name == nickname);
             if (user == null)
                 return false;
-            return user.Ignored;
+            if (user.Ignored == Channel.IGNORED)
+                return true;
+            else
+                return false;
         }
 
         public static AHistory GetActiveAHistory(Connection connection)
@@ -75,6 +84,38 @@ namespace BIRC.Shared.Utils
                     active = connection;
             }
             return active;
+        }
+
+        public static string ColorFromStatus(IrcChannelUser user)
+        {
+            if (user.Modes.Contains('o'))
+                return "Red";
+            if (user.Modes.Contains('h'))
+                return "Orange";
+            if (user.Modes.Contains('v'))
+                return "Green";
+            return "Black";               
+        }
+
+        public static double OpacityFromStatus(IrcChannelUser user)
+        {
+            if (user.User.IsAway == true)
+                return 0.4;
+            return 1;
+        }
+
+        public static void UnreadChannelOnInactive(Channel curChannel)
+        {
+            if (!curChannel.IsActive)
+            {
+                MainPage.RunActionOnUiThread(() =>
+                {
+                    if (curChannel.Unread == 1)
+                        curChannel.Unread = 2;
+                    else
+                        curChannel.Unread = 1;
+                });
+            }
         }
     }
 }

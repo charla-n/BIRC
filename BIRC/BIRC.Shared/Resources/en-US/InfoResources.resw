@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChannelModeChange" xml:space="preserve">
+    <value>{0} has changed channel's mode ({1})</value>
+  </data>
+  <data name="ChannelTopicChanged" xml:space="preserve">
+    <value>{0} has changed channel's topic to {1}</value>
+  </data>
+  <data name="ChannelUserInvited" xml:space="preserve">
+    <value>{0} has been invited to this channel</value>
+  </data>
   <data name="Connected" xml:space="preserve">
     <value>Connected on {0}:{1}</value>
   </data>
@@ -167,6 +176,12 @@
   </data>
   <data name="TryToConnect" xml:space="preserve">
     <value>Try to connect on {0}:{1}</value>
+  </data>
+  <data name="UserKicked" xml:space="preserve">
+    <value>{0} has been kicked for : {1}</value>
+  </data>
+  <data name="UserLeft" xml:space="preserve">
+    <value>has left the channel : {0}</value>
   </data>
   <data name="Whois" xml:space="preserve">
     <value>Whois on {0}:{1}&lt;br/&gt;Realname {2}&lt;br/&gt;IsAway {3}&lt;br/&gt;IsOnline {4}&lt;br/&gt;IsOperator {5}&lt;br/&gt;Idle duration {6}</value>

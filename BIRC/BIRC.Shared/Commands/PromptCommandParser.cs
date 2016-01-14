@@ -136,14 +136,14 @@ namespace BIRC.Shared.Commands
         {
             if (list.Count < 2)
                 throw new ErrorBIRC(MainPage.GetErrorString("IgnoreNoParam")); //TODO
-            c.Command.ChangeIgnoreState(list[1], true);
+            c.Command.ChangeIgnoreState(list[1], Channel.IGNORED);
         }
 
         private static void UnIgnore(IList<string> list, AHistory c)
         {
             if (list.Count < 2)
                 throw new ErrorBIRC(MainPage.GetErrorString("UnIgnoreNoParam")); //TODO
-            c.Command.ChangeIgnoreState(list[1], false);
+            c.Command.ChangeIgnoreState(list[1], Channel.NOT_IGNORED);
         }
 
         private static void Quit(IList<string> list, AHistory c)

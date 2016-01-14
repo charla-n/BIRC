@@ -95,6 +95,7 @@ namespace BIRC
             {
                 ((BIRCViewModel)currentDataContext).GetSelectedConnection().OnAddHistory -= MainPage_OnAddHistory;
             });
+            WebView.ScriptNotify -= WebView_ScriptNotify;
             WebView.LoadCompleted -= WebView_LoadCompleted;
             WebViewContainer.Children.Clear();
             GC.Collect();

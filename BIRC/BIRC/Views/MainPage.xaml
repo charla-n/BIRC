@@ -83,10 +83,14 @@
                                   RelativePanel.AlignRightWithPanel="True">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock x:Name="UserNameTxt" Text="{Binding Name}"
-                                               Margin="0,0,5,0" 
+                                    <RelativePanel Opacity="{Binding Opacity, Mode=TwoWay}">
+                                        <SymbolIcon Symbol="{Binding Ignored, Mode=TwoWay}" x:Name="ContactSymbol" Foreground="{Binding Color, Mode=TwoWay}"
+                                                    ></SymbolIcon>
+                                        <TextBlock x:Name="UserNameTxt" Text="{Binding Name}"
+                                               Margin="5,0,5,0" 
                                                FontWeight="{Binding Unread, Converter={StaticResource BtoFWConverter}, Mode=TwoWay}"
-                                                   ></TextBlock>
+                                                   RelativePanel.RightOf="ContactSymbol"></TextBlock>
+                                    </RelativePanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>

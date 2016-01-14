@@ -58,7 +58,7 @@ namespace BIRC.Shared.Utils
 
         public static string WriteEndTag()
         {
-            return "</tr></table><span class=\"bottom\"></span>";
+            return "</tr></table>";
         }
     }
 }

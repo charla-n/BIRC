@@ -10,18 +10,58 @@ namespace BIRC.Shared.Models
 {
     public class Channel : AHistory
     {
+        public static string IGNORED = "BlockContact";
+        public static string NOT_IGNORED = "Contact";
+
         public Channel()
         {
             users = new ObservableCollection<Channel>();
             history = string.Empty;
             unread = 0;
-            ignored = false;
+            ignored = NOT_IGNORED;
+            Color = "Black";
         }
 
         [JsonIgnore]
-        public bool ignored;
+        private double opacity;
         [JsonIgnore]
-        public bool Ignored
+        public double Opacity
+        {
+            get
+            {
+                return opacity;
+            }
+            set
+            {
+                opacity = value;
+                MainPage.RunActionOnUiThread(() =>
+                {
+                    OnPropertyChanged("Opacity");
+                });
+            }
+        }
+        [JsonIgnore]
+        private string color;
+        [JsonIgnore]
+        public string Color
+        {
+            get
+            {
+                return color;
+            }
+            set
+            {
+                color = value;
+                MainPage.RunActionOnUiThread(() =>
+                {
+                    OnPropertyChanged("Color");
+                });
+            }
+        }
+        [JsonIgnore]
+        private string ignored;
+        [JsonIgnore]
+        public string Ignored
         {
             get
             {
@@ -30,11 +70,14 @@ namespace BIRC.Shared.Models
             set
             {
                 ignored = value;
-                OnPropertyChanged("Ignored");
+                MainPage.RunActionOnUiThread(() =>
+                {
+                    OnPropertyChanged("Ignored");
+                });
             }
         }
         [JsonIgnore]
-        public int unread;
+        private int unread;
         [JsonIgnore]
         public int Unread
         {
@@ -45,7 +88,10 @@ namespace BIRC.Shared.Models
             set
             {
                 unread = value;
-                OnPropertyChanged("Unread");
+                MainPage.RunActionOnUiThread(() =>
+                {
+                    OnPropertyChanged("Unread");
+                });
             }
         }
         [JsonIgnore]

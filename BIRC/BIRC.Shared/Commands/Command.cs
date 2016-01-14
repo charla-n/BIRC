@@ -102,7 +102,7 @@ namespace BIRC.Shared.Commands
             client.LocalUser.SetNickName(nickname);
         }
 
-        public void ChangeIgnoreState(string nickname, bool status)
+        public void ChangeIgnoreState(string nickname, string status)
         {
             foreach (Channel cur in connection.Channels)
             {
@@ -343,8 +343,6 @@ namespace BIRC.Shared.Commands
                 {
                     mychannel.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("NicknameChanged"),
                         user.Name, suser.NickName)));
-                    user.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("NicknameChanged"),
-                        user.Name, suser.NickName)));
                     MainPage.RunActionOnUiThread(() =>
                     {
                         user.Name = suser.NickName;
@@ -394,16 +392,18 @@ namespace BIRC.Shared.Commands
 
                 if (curuser != null)
                 {
-                    if (!curuser.IsActive)
-                    {
-                        MainPage.RunActionOnUiThread(() =>
-                        {
-                            curchan.Unread = 1;
-                            curuser.Unread = 1;
-                        });
-                    }
                     if (ConnectionUtils.IsUserIgnored(curuser, e.Source.Name) == false)
+                    {
+                        if (!curuser.IsActive)
+                        {
+                            MainPage.RunActionOnUiThread(() =>
+                            {
+                                curchan.Unread = 1;
+                                curuser.Unread = 1;
+                            });
+                        }
                         curuser.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
+                    }
                 }
             }
         }
@@ -468,7 +468,9 @@ namespace BIRC.Shared.Commands
                     Users = null,
                     Command = connection.Command,
                     ParentConnection = connection,
-                    IrcUser = p.User
+                    IrcUser = p.User,
+                    Color = ConnectionUtils.ColorFromStatus(p),
+                    Opacity = ConnectionUtils.OpacityFromStatus(p),
                 }));
             foreach (IrcChannelUser user in channel.Users)
             {
@@ -482,10 +484,38 @@ namespace BIRC.Shared.Commands
 
         private void User_ModesChanged(object sender, EventArgs e)
         {
+            IrcChannelUser chanUser = sender as IrcChannelUser;
+
+            if (chanUser != null)
+            {
+                foreach (Channel curchan in connection.Channels)
+                {
+                    Channel user = curchan.Users.FirstOrDefault(p => p.Name == chanUser.User.NickName);
+
+                    if (user != null)
+                    {
+                        user.Color = ConnectionUtils.ColorFromStatus(chanUser);
+                    }
+                }
+            }
         }
 
         private void User_InviteReceived(object sender, IrcChannelInvitationEventArgs e)
         {
+            IrcChannelUser chanUser = sender as IrcChannelUser;
+
+            if (chanUser != null)
+            {
+                foreach (Channel curchan in connection.Channels)
+                {
+                    Channel user = curchan.Users.FirstOrDefault(p => p.Name == chanUser.User.NickName);
+
+                    if (user != null)
+                    {
+                        user.Opacity = ConnectionUtils.OpacityFromStatus(chanUser);
+                    }
+                }
+            }
         }
 
         private void User_IsAwayChanged(object sender, EventArgs e)
@@ -497,15 +527,16 @@ namespace BIRC.Shared.Commands
             GNicknameChanged((IrcUser)sender);
         }
 
-        private void GUserLeft(IrcUser user, string comment)
+        private void GUserLeft(IrcUser user, string comment, List<Channel> channels)
         {
-            foreach (Channel mychannel in connection.Channels)
+            foreach (Channel mychannel in channels)
             {
                 Channel toRemove = mychannel.Users.FirstOrDefault(p => p.Name == user.NickName);
                 if (toRemove != null)
                 {
                     mychannel.RemoveUser(toRemove);
-                    mychannel.AddHistory(HtmlWriter.WriteFrom(comment, user.NickName, false));
+                    ConnectionUtils.UnreadChannelOnInactive(mychannel);
+                    mychannel.AddHistory(HtmlWriter.WriteFrom(string.Format(MainPage.GetInfoString("UserLeft"), comment), user.NickName, false));
                 }
             }
 
@@ -521,17 +552,28 @@ namespace BIRC.Shared.Commands
 
             foreach (IrcChannelUser cuser in user.GetChannelUsers())
                 cuser.ModesChanged -= User_ModesChanged;
-            GUserLeft(user, e.Comment);
+            GUserLeft(user, e.Comment, connection.Channels);
         }
 
         private void Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
         {
             e.ChannelUser.ModesChanged -= User_ModesChanged;
-            GUserLeft(e.ChannelUser.User, e.Comment);
+            GUserLeft(e.ChannelUser.User, e.Comment, 
+                new List<Channel>()
+                {
+                    connection.Channels.FirstOrDefault(p => p.RealName == e.ChannelUser.Channel.Name)
+                });
         }
 
         private void Channel_UserKicked(object sender, IrcChannelUserEventArgs e)
         {
+            Channel chan = connection.Channels.FirstOrDefault(p => p.RealName == e.ChannelUser.Channel.Name);
+
+            if (chan != null)
+            {
+                ConnectionUtils.UnreadChannelOnInactive(chan);
+                chan.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("UserKicked"), e.ChannelUser.User.NickName, e.Comment)));
+            }
         }
 
         private void Channel_UserJoined(object sender, IrcChannelUserEventArgs e)
@@ -550,17 +592,45 @@ namespace BIRC.Shared.Commands
                 ParentConnection = connection,
                 Name = e.ChannelUser.User.NickName,
                 Command = connection.Command,
-                IrcUser = e.ChannelUser.User
+                IrcUser = e.ChannelUser.User,
+                Color = ConnectionUtils.ColorFromStatus(e.ChannelUser),
+                Opacity = ConnectionUtils.OpacityFromStatus(e.ChannelUser),
             });
+            ConnectionUtils.UnreadChannelOnInactive(mychannel);
             mychannel.AddHistory(HtmlWriter.WriteFrom("has joined", e.ChannelUser.User.NickName, false));
         }
 
         private void Channel_UserInvited(object sender, IrcUserEventArgs e)
         {
+            IrcChannel channel = sender as IrcChannel;
+
+            if (channel != null)
+            {
+                Channel chan = connection.Channels.FirstOrDefault(p => p.RealName == channel.Name);
+
+                if (chan != null)
+                {
+                    ConnectionUtils.UnreadChannelOnInactive(chan);
+                    chan.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("ChannelUserInvited"), e.User.NickName)));
+                }
+            }
         }
 
         private void Channel_TopicChanged(object sender, IrcUserEventArgs e)
         {
+            IrcChannel channel = sender as IrcChannel;
+
+            if (channel != null)
+            {
+                Channel chan = connection.Channels.FirstOrDefault(p => p.RealName == channel.Name);
+
+                if (chan != null)
+                {
+                    ConnectionUtils.UnreadChannelOnInactive(chan);
+                    chan.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("ChannelTopicChanged"), e.User.NickName,
+                        string.Concat(channel.Modes))));
+                }
+            }
         }
 
         private void Channel_NoticeReceived(object sender, IrcMessageEventArgs e)
@@ -570,6 +640,19 @@ namespace BIRC.Shared.Commands
 
         private void Channel_ModesChanged(object sender, IrcUserEventArgs e)
         {
+            IrcChannel channel = sender as IrcChannel;
+
+            if (channel != null)
+            {
+                Channel chan = connection.Channels.FirstOrDefault(p => p.RealName == channel.Name);
+
+                if (chan != null)
+                {
+                    ConnectionUtils.UnreadChannelOnInactive(chan);
+                    chan.AddHistory(HtmlWriter.Write(string.Format(MainPage.GetInfoString("ChannelModeChange"), e.User.NickName,
+                        string.Concat(channel.Modes))));
+                }
+            }
         }
 
         private void Channel_MessageReceived(object sender, IrcMessageEventArgs e)
@@ -580,18 +663,11 @@ namespace BIRC.Shared.Commands
 
                 if (curChannel != null)
                 {
-                    if (!curChannel.IsActive)
-                    {
-                        MainPage.RunActionOnUiThread(() =>
-                        {
-                            if (curChannel.Unread == 1)
-                                curChannel.Unread = 2;
-                            else
-                                curChannel.Unread = 1;
-                        });
-                    }
                     if (ConnectionUtils.IsUserIgnored(curChannel, e.Source.Name) == false)
+                    {
+                        ConnectionUtils.UnreadChannelOnInactive(curChannel);
                         curChannel.AddHistory(HtmlWriter.WriteFrom(e.Text, e.Source.Name, false));
+                    }
                 }
             }
         }
